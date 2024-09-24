@@ -1,4 +1,4 @@
-  # Bullion API
+  # Singapore Bullion Retailers API
 
 Programmatic functions for accessing Singapore bullion retailers API
 
