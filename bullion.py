@@ -1,5 +1,4 @@
-import aiohttp
-import bullionstar
+import bullionstar, stargrams
 
 '''
 https://services.bullionstar.com/auth/v1/initialize
@@ -64,7 +63,7 @@ async def login(email: str, password: str, retailer: str):
         case "silverbullion":
             result = await login_silverbullion(email, password)
         case "stargrams":
-            result = await login_stargrams(email, password)
+            result = await stargrams.login(email, password)
 
     return result
 
@@ -112,35 +111,6 @@ async def login_silverbullion(email, password):
         
 
     return
-
-
-async def login_stargrams(email, password):
-    
-    body_login = {
-        "username": email,
-        "password": password
-    }
-
-    async with aiohttp.ClientSession() as session:
-
-        async with session.post('https://www.stargrams.app/api/login', data=body_login) as resp:
-            # print(resp.status)
-            data = await resp.text()
-            print(data)
-
-        token = input("Enter 2FA: ")
-
-        body_2fa = {
-            "token": token
-        }
-
-        async with session.post('https://www.stargrams.app/api/user/2fa/phone', data=body_2fa) as resp:
-            # print(resp.status)
-            data = await resp.text()
-            print(data)
-    
-    return
-
 
 
 
