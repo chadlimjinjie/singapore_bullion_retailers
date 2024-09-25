@@ -71,7 +71,8 @@ async def login(email: str, password: str, retailer: str):
     return result
 
 
-
+# To break down initialize and authenticate functions
+# Add two factor authentication function
 async def login_bullionstar(email, password):
     body_initialize = {
         "email": email,
