@@ -63,10 +63,10 @@ async def login(email: str, password: str, retailer: str):
     match retailer:
         case "bullionstar":
             result = await login_bullionstar(email, password)
-            pass
         case "silverbullion":
             result = await login_silverbullion(email, password)
-            pass
+        case "stargrams":
+            result = await login_stargrams(email, password)
 
     return result
 
@@ -116,17 +116,86 @@ async def login_bullionstar(email, password):
 
 
 
+'''
+https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name=root&currency=SGD&apg=-1
+'''
+
+
+
+'''
+https://www.silverbullion.com.sg/Account/Login
+__RequestVerificationToken: PuXNCzCEMh0cv0vl7ZF18UUtLO5WYH2iZ6OPMJmjNS7St2i0dLTey9M24gcfC6-izRkrWS6DUsqiAfIDQDF6cuLkDrU1
+ReturnUrl: /
+CopyCart: False
+TokenCode: 
+CaptchaToken: 
+VerifyMethod: 
+UsernameEmail: example@example.com
+Password: 123456789
+'''
 async def login_silverbullion(email, password):
+
+    # body_login = {
+    #     "__RequestVerificationToken": "W7tAtfw6c-U5oHBwU37MqEW-xbw1etttu3RSzpNE_65Gh9DPdUmJjr6cMW90aVrMDv_2BcQURdhuZywfZfmLT127rM81",
+    #     "ReturnUrl": "/",
+    #     "CopyCart": "False",
+    #     "TokenCode": "",
+    #     "CaptchaToken": "",
+    #     "VerifyMethod": "",
+    #     "UsernameEmail": email,
+    #     "Password": password
+    # }
+
+    # async with aiohttp.ClientSession() as session:
+
+    #     async with session.post('https://www.silverbullion.com.sg/Account/Login', data=body_login) as resp:
+    #         print(resp.status)
+    #         data = await resp.text()
+    #         print(data)
+
+
+
+        
+
+    return
+
+
+async def login_stargrams(email, password):
+    
+    body_login = {
+        "username": email,
+        "password": password
+    }
+
+    async with aiohttp.ClientSession() as session:
+
+        async with session.post('https://www.stargrams.app/api/login', data=body_login) as resp:
+            # print(resp.status)
+            data = await resp.text()
+            print(data)
+
+        token = input("Enter 2FA: ")
+
+        body_2fa = {
+            "token": token
+        }
+
+        async with session.post('https://www.stargrams.app/api/user/2fa/phone', data=body_2fa) as resp:
+            # print(resp.status)
+            data = await resp.text()
+            print(data)
+    
     return
 
 
 
 
-
 while True:
+    retailer = input("Enter retailer (bullionstar, silverbullion, stargrams): ")
+    retailer = retailer if retailer != "" else "bullionstar"
     email = input("Enter your email: ")
     password = getpass.getpass("Enter your password: ")
-    login_data = asyncio.run(login(email, password, "bullionstar"))
+    login_data = asyncio.run(login(email, password, retailer))
     if login_data["success"]:
         break
     
