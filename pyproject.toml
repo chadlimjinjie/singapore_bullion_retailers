@@ -16,10 +16,12 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-  "aiohttp"
-]
 
 [project.urls]
 Homepage = "https://github.com/chadlimjinjie/singapore_bullion_retailers_api"
 Issues = "https://github.com/chadlimjinjie/singapore_bullion_retailers_api/issues"
+
+pick a2aadd9 new file:   .pypirc        new file:   LICENSE     modified:   pyproject.toml
+pick f50394e deleted:    .pypirc
+pick 40dbdc4 Revert "   new file:   .pypirc"
+pick 7a842dd new file:   test
