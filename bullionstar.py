@@ -156,7 +156,7 @@ async def invalidate(accessToken: str):
     }
     async with aiohttp.ClientSession() as session:
 
-        async with session.post('https://services.bullionstar.com/auth/v1/body_invalidate', data=body_invalidate) as resp:
+        async with session.post('https://services.bullionstar.com/auth/v1/invalidate', data=body_invalidate) as resp:
             print(resp.status)
             data = await resp.json()
             print(data)
