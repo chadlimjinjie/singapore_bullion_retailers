@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+src/bullion/__init__.py
+src/bullion/bullion.py
+src/bullion/bullionstar.py
+src/bullion/silverbullion.py
+src/bullion/stargrams.py
+src/singapore_bullion_retailers_api.egg-info/PKG-INFO
+src/singapore_bullion_retailers_api.egg-info/SOURCES.txt
+src/singapore_bullion_retailers_api.egg-info/dependency_links.txt
+src/singapore_bullion_retailers_api.egg-info/top_level.txt

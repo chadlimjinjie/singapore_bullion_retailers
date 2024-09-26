@@ -1,0 +1,33 @@
+Metadata-Version: 2.1
+Name: singapore_bullion_retailers_api
+Version: 0.0.1
+Summary: A small example package
+Author-email: Chad Lim Jin Jie <chadlimjinjie@gmail.com>
+Project-URL: Homepage, https://github.com/chadlimjinjie/singapore_bullion_retailers_api
+Project-URL: Issues, https://github.com/chadlimjinjie/singapore_bullion_retailers_api/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+
+  # Singapore Bullion Retailers API
+
+Programmatic functions for accessing Singapore bullion retailers API
+
+https://www.bullionstar.com/developer/docs/api/
+BullionStar Singapore
+- Login function
+
+
+(Development on hold)
+Silver Bullion Singapore
+- Login function (TODO)
+
+
+
+Roadmap
+- To release as a python package
+- List products
+- Order placing
+
