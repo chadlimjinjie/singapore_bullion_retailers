@@ -1,6 +1,7 @@
 import aiohttp
 import hashlib
-
+import asyncio
+import requests
 
 '''
 https://services.bullionstar.com/auth/v1/initialize
@@ -59,106 +60,106 @@ https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name
 
 '''
 
-# Authentication API
-async def login(email, password):
-    data = await initialize(email)
-    data = await authenticate(data["authToken"], encryptPassword(data["salt"], hashPassword(password)))
-    return data
+class BullionStar:
+    def __init__(self, apiKey: str = "") -> None:
+        self.session = requests.Session()
+        self.apiKey = apiKey
+        self.accessToken = ""
+        pass
+
+    
+
+    # Authentication API
+    def login(self, email: str, password: str):
+        data = self.initialize(email)
+        data = self.authenticate(data["authToken"], self.encryptPassword(data["salt"], self.hashPassword(password)))
+        return data
 
 
-async def initialize(email):
-    body_initialize = {
-        "email": email,
-        "machineId": "EMV93wOBXXOUg04IOsKY",
-        "ignoreWarning": "false",
-        "device": "D"
-    }
+    def initialize(self, email: str):
+        body_initialize = {
+            "email": email,
+            "machineId": "EMV93wOBXXOUg04IOsKY",
+            "ignoreWarning": "false",
+            "device": "D"
+        }
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post('https://services.bullionstar.com/auth/v1/initialize', data=body_initialize) as resp:
-            print(resp.status)
-            data = await resp.json()
-            print(data)
-
-    return data
-
-
-def hashPassword(password: str):
-    hashedPassword = hashlib.md5(str.encode(password)).hexdigest()
-    return hashedPassword
+        resp = self.session.post('https://services.bullionstar.com/auth/v1/initialize', data=body_initialize)
+        data = resp.json()
+        
+        print(resp.status_code, data)
+        
+        return data
 
 
-def encryptPassword(salt: str, hashedPassword: str):
-    encryptedPassword = hashlib.md5(str.encode(salt + hashedPassword)).hexdigest()
-    return encryptedPassword
+    def hashPassword(self, password: str):
+        hashedPassword = hashlib.md5(str.encode(password)).hexdigest()
+        return hashedPassword
 
 
-async def authenticate(authToken: str, encryptedPassword: str):
-    body_authenticate = {
-        "authToken": authToken,
-        "encryptedPassword": encryptedPassword,
-        "valuation": "buy",
-        "locationId": "1",
-        "ignoreWarning": "false",
-        "device": "D"
-    }
-    async with aiohttp.ClientSession() as session:
-
-        async with session.post('https://services.bullionstar.com/auth/v1/authenticate', data=body_authenticate) as resp:
-            print(resp.status)
-            data = await resp.json()
-            print(data)
-    return data
+    def encryptPassword(self, salt: str, hashedPassword: str):
+        encryptedPassword = hashlib.md5(str.encode(salt + hashedPassword)).hexdigest()
+        return encryptedPassword
 
 
-async def authenticate_2fa(twoFactorToken: str, code: str):
-    body_authenticate_2fa = {
-        "twoFactorToken": twoFactorToken,
-        "code": code,
-        # "valuation": "buy",
-        # "locationId": "1",
-        # "ignoreWarning": "false",
-        # "device": "D"
-    }
-    async with aiohttp.ClientSession() as session:
-
-        async with session.post('https://services.bullionstar.com/auth/v1/authenticateTwoFactor', data=body_authenticate_2fa) as resp:
-            print(resp.status)
-            data = await resp.json()
-            print(data)
-    return data
+    def authenticate(self, authToken: str, encryptedPassword: str):
+        body_authenticate = {
+            "authToken": authToken,
+            "encryptedPassword": encryptedPassword,
+            "valuation": "buy",
+            "locationId": "1",
+            "ignoreWarning": "false",
+            "device": "D"
+        }
+        resp = self.session.post('https://services.bullionstar.com/auth/v1/authenticate', data=body_authenticate) 
+        data = resp.json()
+        print(resp.status_code, data)
+        return data
 
 
-async def authenticateTwoFactorResendCode(twoFactorToken: str):
-    body_authenticate_2fa = {
-        "twoFactorToken": twoFactorToken,
-        # "valuation": "buy",
-        # "locationId": "1",
-        # "ignoreWarning": "false",
-        # "device": "D"
-    }
-    async with aiohttp.ClientSession() as session:
-
-        async with session.post('https://services.bullionstar.com/auth/v1/authenticateTwoFactorResendCode', data=body_authenticate_2fa) as resp:
-            print(resp.status)
-            data = await resp.json()
-            print(data)
-    return data
+    async def authenticate_2fa(self, twoFactorToken: str, code: str):
+        body_authenticate_2fa = {
+            "twoFactorToken": twoFactorToken,
+            "code": code,
+            # "valuation": "buy",
+            # "locationId": "1",
+            # "ignoreWarning": "false",
+            # "device": "D"
+        }
+        resp = self.session.post('https://services.bullionstar.com/auth/v1/authenticateTwoFactor', data=body_authenticate_2fa)
+        data = resp.json()
+        print(resp.status_code, data)
+        return data
 
 
-async def invalidate(accessToken: str):
-    body_invalidate = {
-        "accessToken": accessToken,
-        # "valuation": "buy",
-        # "locationId": "1",
-        # "ignoreWarning": "false",
-        # "device": "D"
-    }
-    async with aiohttp.ClientSession() as session:
+    async def authenticateTwoFactorResendCode(self, twoFactorToken: str):
+        body_authenticate_2fa = {
+            "twoFactorToken": twoFactorToken,
+            # "valuation": "buy",
+            # "locationId": "1",
+            # "ignoreWarning": "false",
+            # "device": "D"
+        }
+        resp = self.session.post('https://services.bullionstar.com/auth/v1/authenticateTwoFactorResendCode', data=body_authenticate_2fa)
+        data = resp.json()
+        print(resp.status_code, data)
 
-        async with session.post('https://services.bullionstar.com/auth/v1/invalidate', data=body_invalidate) as resp:
-            print(resp.status)
-            data = await resp.json()
-            print(data)
-    return data
+        return data
+
+
+    async def invalidate(self, accessToken: str):
+        body_invalidate = {
+            "accessToken": accessToken,
+            # "valuation": "buy",
+            # "locationId": "1",
+            # "ignoreWarning": "false",
+            # "device": "D"
+        }
+        
+        
+        resp = self.session.post('https://services.bullionstar.com/auth/v1/invalidate', data=body_invalidate)
+        data = resp.json()
+        print(resp.status_code, data)
+        
+        return data
 

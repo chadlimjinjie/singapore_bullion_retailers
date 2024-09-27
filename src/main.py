@@ -1,7 +1,10 @@
-import bullion
 import getpass
 import asyncio
 
+from bullion import bullion
+
+# bullionstar_client = bullion.BullionStar()
+# data = bullionstar_client.login("chadlimjinjie@gmail.com", "Ch@dlim98")
 
 
 while True:

@@ -1,18 +1,23 @@
 import aiohttp
+import requests
 
-async def login(email, password):
+class StarGrams:
+    def __init__(self) -> None:
+        self.session = requests.Session()
+        pass
     
-    body_login = {
-        "username": email,
-        "password": password
-    }
+    
 
-    async with aiohttp.ClientSession() as session:
+    def login(self, email: str, password: str):
+        
+        body_login = {
+            "username": email,
+            "password": password
+        }
+        resp = self.session.post('https://www.stargrams.app/api/login', data=body_login)
 
-        async with session.post('https://www.stargrams.app/api/login', data=body_login) as resp:
-            # print(resp.status)
-            data = await resp.text()
-            print(data)
+        data = resp.json()
+        print(data)
 
         token = input("Enter 2FA: ")
 
@@ -20,11 +25,12 @@ async def login(email, password):
             "token": token
         }
 
-        async with session.post('https://www.stargrams.app/api/user/2fa/phone', data=body_2fa) as resp:
-            # print(resp.status)
-            data = await resp.text()
-            print(data)
-    
-    return
+        resp = self.session.post('https://www.stargrams.app/api/user/2fa/phone', data=body_2fa)
+
+
+        data = resp.json()
+        print(data)
+        
+        return
 
 
