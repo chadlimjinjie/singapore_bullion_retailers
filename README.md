@@ -22,7 +22,5 @@ Silver Bullion Singapore
 
 
 Roadmap
-- To release as a python package
-- List products
-- Order placing
-
+- Retailers onboarding
+- To release as a python package on PyPi
