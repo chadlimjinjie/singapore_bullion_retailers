@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "singapore_bullion_retailers"
-version = "development"
+version = "[N!]N(.N)*[{a|b|rc}N][.postN][.devN]"
 authors = [
   { name="Chad Lim Jin Jie", email="chadlimjinjie@gmail.com" },
 ]
