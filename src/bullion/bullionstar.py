@@ -61,8 +61,8 @@ https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name
 class BullionStar:
     def __init__(self, apiKey: str = "") -> None:
         self.session = requests.Session()
-        self.apiKey = apiKey
-        self.accessToken = ""
+        self.apiKey: str = apiKey
+        self.accessToken: str = ""
         pass
 
     
@@ -145,9 +145,9 @@ class BullionStar:
         return data
 
 
-    async def invalidate(self, accessToken: str):
+    async def invalidate(self):
         body_invalidate = {
-            "accessToken": accessToken,
+            "accessToken": self.accessToken,
             # "valuation": "buy",
             # "locationId": "1",
             # "ignoreWarning": "false",
@@ -158,6 +158,6 @@ class BullionStar:
         resp = self.session.post('https://services.bullionstar.com/auth/v1/invalidate', data=body_invalidate)
         data = resp.json()
         print(resp.status_code, data)
-        
+        self.accessToken = ""
         return data
 
