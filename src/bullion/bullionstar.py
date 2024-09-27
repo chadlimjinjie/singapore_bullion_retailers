@@ -1,6 +1,4 @@
-import aiohttp
 import hashlib
-import asyncio
 import requests
 
 '''
