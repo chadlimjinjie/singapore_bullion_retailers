@@ -2,8 +2,8 @@
 
 Programmatic functions for accessing Singapore bullion retailers API
 
-https://www.bullionstar.com/developer/docs/api/
-BullionStar Singapore
+
+BullionStar Singapore https://www.bullionstar.com/developer/docs/api/
 - Initialize Authentication
 - Perform Authentication
 - Perform Two-factor Authentication
