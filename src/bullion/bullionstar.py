@@ -161,7 +161,6 @@ class BullionStar:
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart/item', headers=headers, json=body_cart)
         data = resp.json()
-        print(data)
         if data:
             self.cartEntries = data["cartEntries"]
             self.cartString = data["cartString"]
