@@ -4,6 +4,7 @@ Programmatic functions for accessing Singapore bullion retailers API
 
 
 BullionStar Singapore https://www.bullionstar.com/developer/docs/api/
+
 Authentication API
 - Initialize Authentication
 - Perform Authentication

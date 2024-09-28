@@ -32,9 +32,9 @@ class BullionStar:
         '''
         body_initialize = {
             "email": email,
-            "machineId": "EMV93wOBXXOUg04IOsKY",
-            "ignoreWarning": "false",
-            "device": "D"
+            # "machineId": "EMV93wOBXXOUg04IOsKY",
+            # "ignoreWarning": "false",
+            # "device": "D"
         }
 
         resp = self.session.post(f'https://{self.uri}/auth/v1/initialize', data=body_initialize)
