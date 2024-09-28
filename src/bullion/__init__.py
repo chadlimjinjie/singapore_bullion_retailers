@@ -5,7 +5,7 @@ async def login(email: str, password: str, retailer: str):
 
     match retailer:
         case "bullionstar":
-            result = await BullionStar().login(email, password)
+            result = BullionStar(development=False).login(email, password)
         case "silverbullion":
             result = await bullion.silverbullion.login(email, password)
         case "stargrams":
