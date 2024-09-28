@@ -7,12 +7,14 @@ https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name
 '''
 
 class BullionStar:
-    def __init__(self, apiKey: str = "", development: bool = True) -> None:
+    def __init__(self, locationId: int = None, apiKey: str = None, development: bool = True) -> None:
         self.uri = "testapi.bullionstar.com" if development else "services.bullionstar.com" # services.bullionstar.com/api.bullionstar.com
         self.session: Session = requests.Session()
         self.apiKey: str = apiKey
         self.accessToken: str = ""
+        self.cartEntries: list = []
         self.cartString: str = ""
+        self.locationId: int = locationId
         pass
 
 
@@ -124,13 +126,13 @@ class BullionStar:
     
     # Shopping Cart API: https://www.bullionstar.com/developer/docs/api/resources/shopping-cart.html
     # Refresh Shopping Cart
-    def refresh_shopping_cart(self, locationId: int):
+    def refresh_shopping_cart(self):
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
         }
         body_cart = {
-            "locationId": locationId,
+            "locationId": self.locationId,
             "cartString": self.cartString
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart', headers=headers, json=body_cart)
@@ -138,7 +140,7 @@ class BullionStar:
         return data
     
     # Add to Shopping Cart
-    def add_to_cart(self, productId: int, quantity: str, locationId: int):
+    def add_to_cart(self, productId: int, quantity: str):
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
@@ -146,44 +148,64 @@ class BullionStar:
         body_cart = {
             "productId": productId,
             "quantity": quantity,
-            "locationId": locationId,
+            "locationId": self.locationId,
             "cartString": self.cartString,
             "accessToken" : self.accessToken,
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart/item', headers=headers, json=body_cart)
         data = resp.json()
-        self.cartString = data["cartString"]
+        if data:
+            self.cartEntries = data["cartEntries"]
+            self.cartString = data["cartString"]
+            
         return data
-
-
+    
+    # Update Shopping Cart
+    def update_cart(self, productId: int, quantity: str):
+        headers = {
+            "Authorization": self.accessToken,
+            "Content-Type": "application/json; charset=UTF-8"
+        }
+        body_cart = {
+            "locationId": self.locationId,
+            "cartString": self.cartString
+        }
+        for entries in self.cartEntries:
+            if productId == entries["productId"]:
+                quantity["quantity"] = quantity
+        resp = self.session.put(f'https://{self.uri}/product/v1/shoppingcart/item', headers=headers, json=body_cart)
+        return
+    
+    
     # Remove from Shopping Cart
     '''
     480: 1 Gram of Gold - Bullion Savings Program (BSP)
     481: 1 Gram of Silver - Bullion Savings Program (BSP)
     '''
-    def remove_from_cart(self, productId: int, locationId: int):
+    def remove_from_cart(self, productId: int):
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
         }
         body_cart = {
-            "locationId": locationId,
+            "locationId": self.locationId,
             "cartString": self.cartString,
             "accessToken" : self.accessToken,
         }
         resp = self.session.delete(f'https://{self.uri}/product/v1/shoppingcart/item/{productId}', headers=headers, json=body_cart)
         data = resp.json()
-        self.cartString = data["cartString"]
+        if data:
+            self.cartEntries = data["cartEntries"]
+            self.cartString = data["cartString"]
         return data
-
-
-    def load_all_shopping_carts(self, locationId: int):
+    
+    def load_all_shopping_carts(self):
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
         }
         body_cart = {
-            "locationId": locationId,
+            "locationId": self.locationId,
             # "cartString": self.cartString
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart/all', headers=headers, json=body_cart)
