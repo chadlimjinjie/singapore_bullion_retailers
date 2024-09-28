@@ -17,12 +17,17 @@ class BullionStar:
         self.locationId: int = locationId
         pass
 
-
     
     def login(self, email: str, password: str):
-        data = self.initialize(email)
-        data = self.authenticate(data["authToken"], self.encryptPassword(data["salt"], self.hashPassword(password)))
-        return data
+        data_initialize = self.initialize(email)
+        data_authenticate = self.authenticate(data_initialize["authToken"], self.encryptPassword(data_initialize["salt"], self.hashPassword(password)))
+        data_load_all_shopping_carts = self.load_all_shopping_carts()
+        # print(data_load_all_shopping_carts)
+        if data_load_all_shopping_carts:
+            self.cartEntries = data_load_all_shopping_carts["response"]["cartEntries"]
+            self.cartString = data_load_all_shopping_carts["response"]["cartString"]
+        return data_authenticate
+
 
     # Authentication API: https://www.bullionstar.com/developer/docs/api/resources/auth.html
     # Initialize Authentication
@@ -32,7 +37,7 @@ class BullionStar:
         '''
         body_initialize = {
             "email": email,
-            # "machineId": "EMV93wOBXXOUg04IOsKY",
+            "machineId": "EMV93wOBXXOUg04IOsKY",
             # "ignoreWarning": "false",
             # "device": "D"
         }
@@ -40,7 +45,7 @@ class BullionStar:
         resp = self.session.post(f'https://{self.uri}/auth/v1/initialize', data=body_initialize)
         data = resp.json()
         
-        print(resp.status_code, data)
+        # print(resp.status_code, data)
         
         return data
 
@@ -70,7 +75,7 @@ class BullionStar:
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticate', data=body_authenticate) 
         data = resp.json()
-        print(resp.status_code, data)
+        # print(resp.status_code, data)
         
         if data:
             self.accessToken = data["accessToken"]
@@ -123,6 +128,9 @@ class BullionStar:
     # Shopping Cart API: https://www.bullionstar.com/developer/docs/api/resources/shopping-cart.html
     # Refresh Shopping Cart
     def refresh_shopping_cart(self):
+        '''
+        Use this API to refresh the user's shopping cart contents; usually required when updating the product prices and quantity.
+        '''
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
@@ -136,7 +144,7 @@ class BullionStar:
         return data
     
     # Add to Shopping Cart
-    def add_to_shopping_cart(self, productId: int, quantity: str):
+    def add_to_shopping_cart(self, productId: int, quantity: int):
         '''
         Use this API to add a product to the user's shopping cart.
         '''
@@ -153,6 +161,7 @@ class BullionStar:
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart/item', headers=headers, json=body_cart)
         data = resp.json()
+        print(data)
         if data:
             self.cartEntries = data["cartEntries"]
             self.cartString = data["cartString"]
@@ -160,7 +169,7 @@ class BullionStar:
         return data
     
     # Update Shopping Cart
-    def update_shopping_cart(self, productId: int, quantity: str):
+    def update_shopping_cart(self, productId: int, quantity: int):
         '''
         Use this API to update the user's shopping cart contents; usually required when updating the quantity for products that have already been added to the shopping cart.
         '''
@@ -183,12 +192,10 @@ class BullionStar:
         
         resp = self.session.put(f'https://{self.uri}/product/v1/shoppingcart/item/{productId}', headers=headers, json=body_cart)
         data = resp.json()
-        print(data)
         if data:
             self.cartString = data["cartString"]
         
         return data
-    
     
     # Remove from Shopping Cart
     def remove_from_shopping_cart(self, productId: int):
@@ -211,6 +218,7 @@ class BullionStar:
             self.cartString = data["cartString"]
         return data
     
+    # Load All Shopping Carts
     def load_all_shopping_carts(self):
         headers = {
             "Authorization": self.accessToken,
@@ -223,3 +231,10 @@ class BullionStar:
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart/all', headers=headers, json=body_cart)
         data = resp.json()
         return data
+
+    def display_shopping_cart(self):
+        print(f'productId title quantity')
+        for entry in self.cartEntries:
+            print(f'{entry['productId']} {entry['title']} {entry['quantity']}')
+        
+    
