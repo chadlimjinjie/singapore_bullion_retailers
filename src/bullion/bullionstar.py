@@ -16,7 +16,7 @@ class BullionStar:
         pass
 
 
-    # Authentication API
+    # Authentication API: https://www.bullionstar.com/developer/docs/api/resources/auth.html
     def login(self, email: str, password: str):
         data = self.initialize(email)
         data = self.authenticate(data["authToken"], self.encryptPassword(data["salt"], self.hashPassword(password)))
@@ -122,7 +122,7 @@ class BullionStar:
         return data
     
     
-    # Shopping Cart API
+    # Shopping Cart API: https://www.bullionstar.com/developer/docs/api/resources/shopping-cart.html
     # Refresh Shopping Cart
     def refresh_shopping_cart(self, locationId: int):
         headers = {
