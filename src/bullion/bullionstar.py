@@ -18,14 +18,18 @@ class BullionStar:
         pass
 
 
-    # Authentication API: https://www.bullionstar.com/developer/docs/api/resources/auth.html
+    
     def login(self, email: str, password: str):
         data = self.initialize(email)
         data = self.authenticate(data["authToken"], self.encryptPassword(data["salt"], self.hashPassword(password)))
         return data
 
-
+    # Authentication API: https://www.bullionstar.com/developer/docs/api/resources/auth.html
+    # Initialize Authentication
     def initialize(self, email: str):
+        '''
+        Use this API to initialize the authentication process.
+        '''
         body_initialize = {
             "email": email,
             "machineId": "EMV93wOBXXOUg04IOsKY",
@@ -50,8 +54,12 @@ class BullionStar:
         encryptedPassword = hashlib.md5(str.encode(salt + hashedPassword)).hexdigest()
         return encryptedPassword
 
-
+    # Perform Authentication
     def authenticate(self, authToken: str, encryptedPassword: str):
+        '''
+        Use this API to perform authentication to generate an access token.
+        The authToken response item from the /auth/v1/initialize endpoint are required as inputs to this API.
+        '''
         body_authenticate = {
             "authToken": authToken,
             "encryptedPassword": encryptedPassword,
@@ -73,11 +81,7 @@ class BullionStar:
     async def authenticate_2fa(self, twoFactorToken: str, code: str):
         body_authenticate_2fa = {
             "twoFactorToken": twoFactorToken,
-            "code": code,
-            # "valuation": "buy",
-            # "locationId": "1",
-            # "ignoreWarning": "false",
-            # "device": "D"
+            "code": code
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticateTwoFactor', data=body_authenticate_2fa)
         data = resp.json()
@@ -87,11 +91,7 @@ class BullionStar:
 
     async def authenticateTwoFactorResendCode(self, twoFactorToken: str):
         body_authenticate_2fa = {
-            "twoFactorToken": twoFactorToken,
-            # "valuation": "buy",
-            # "locationId": "1",
-            # "ignoreWarning": "false",
-            # "device": "D"
+            "twoFactorToken": twoFactorToken
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticateTwoFactorResendCode', data=body_authenticate_2fa)
         data = resp.json()
@@ -102,11 +102,7 @@ class BullionStar:
 
     async def invalidate(self):
         body_invalidate = {
-            "accessToken": self.accessToken,
-            # "valuation": "buy",
-            # "locationId": "1",
-            # "ignoreWarning": "false",
-            # "device": "D"
+            "accessToken": self.accessToken
         }
         
         
@@ -140,7 +136,10 @@ class BullionStar:
         return data
     
     # Add to Shopping Cart
-    def add_to_cart(self, productId: int, quantity: str):
+    def add_to_shopping_cart(self, productId: int, quantity: str):
+        '''
+        Use this API to add a product to the user's shopping cart.
+        '''
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
@@ -161,28 +160,41 @@ class BullionStar:
         return data
     
     # Update Shopping Cart
-    def update_cart(self, productId: int, quantity: str):
+    def update_shopping_cart(self, productId: int, quantity: str):
+        '''
+        Use this API to update the user's shopping cart contents; usually required when updating the quantity for products that have already been added to the shopping cart.
+        '''
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
         }
+
+        
+        for entry in self.cartEntries:
+            if str(productId) == entry["productId"]:
+                entry["quantity"] = quantity
+
+        cartString = ",".join([f"{entry["productId"]},{entry["quantity"]}" for entry in self.cartEntries])
+        
         body_cart = {
             "locationId": self.locationId,
-            "cartString": self.cartString
+            "cartString": cartString
         }
-        for entries in self.cartEntries:
-            if productId == entries["productId"]:
-                quantity["quantity"] = quantity
-        resp = self.session.put(f'https://{self.uri}/product/v1/shoppingcart/item', headers=headers, json=body_cart)
-        return
+        
+        resp = self.session.put(f'https://{self.uri}/product/v1/shoppingcart/item/{productId}', headers=headers, json=body_cart)
+        data = resp.json()
+        print(data)
+        if data:
+            self.cartString = data["cartString"]
+        
+        return data
     
     
     # Remove from Shopping Cart
-    '''
-    480: 1 Gram of Gold - Bullion Savings Program (BSP)
-    481: 1 Gram of Silver - Bullion Savings Program (BSP)
-    '''
-    def remove_from_cart(self, productId: int):
+    def remove_from_shopping_cart(self, productId: int):
+        '''
+        Use this API to remove a product from the user's shopping cart.
+        '''
         headers = {
             "Authorization": self.accessToken,
             "Content-Type": "application/json; charset=UTF-8"
