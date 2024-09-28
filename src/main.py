@@ -1,5 +1,4 @@
 import getpass
-import asyncio
 
 from bullion import bullion
 
