@@ -26,6 +26,8 @@ print("2. Update Shopping Cart")
 print("3. Remove from Shopping Cart")
 print("4. Refresh Shopping Cart")
 print("5. Load All Shopping Carts")
+print("6. Display Shopping Cart")
+print("7. Initialize Order")
 while True:
     option = int(input("Enter option: "))
     print()
@@ -39,7 +41,7 @@ while True:
         update_shopping_cart = bullionstar_client.update_shopping_cart(productId, quantity)
     elif option == 3:
         productId = int(input("Enter productId: "))
-        bullionstar_client.remove_from_shopping_cart()
+        bullionstar_client.remove_from_shopping_cart(productId)
     elif option == 4:
         refresh_shopping_cart = bullionstar_client.refresh_shopping_cart()
         # print(refresh_shopping_cart)
@@ -48,6 +50,8 @@ while True:
         print(load_all_shopping_carts)
     elif option == 6:
         bullionstar_client.display_shopping_cart()
+    elif option == 7:
+        bullionstar_client.initialize_order("SGD", 3, 37)
     elif option == -1:
         break
 
