@@ -7,7 +7,7 @@ https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name
 '''
 
 class BullionStar:
-    def __init__(self, locationId: int = None, apiKey: str = None, development: bool = True) -> None:
+    def __init__(self, cuurency: str, locationId: int = None, apiKey: str = None, development: bool = True) -> None:
         self.uri = "testapi.bullionstar.com" if development else "services.bullionstar.com" # services.bullionstar.com/api.bullionstar.com
         self.session: Session = requests.Session()
         self.apiKey: str = apiKey
@@ -236,6 +236,7 @@ class BullionStar:
         for entry in self.cartEntries:
             print(f'{entry['productId']} {entry['title']} {entry['quantity']}')
     
+
     # Buy Checkout API: https://www.bullionstar.com/developer/docs/api/resources/buy-checkout.html
     '''
     The Buy Checkout API allows you to lock in on the Buy price and place a Buy order
@@ -388,6 +389,11 @@ class BullionStar:
         Use this API to initialize a Buy order. Get the total order price, and obtain a priceLockToken to lock in on the order price before placing the order. This API also returns shipping and payment methods that are available for the order.
         The priceLockToken is currently valid for three minutes; however this limit is subject to change.
         '''
+        # print(currency, shippingMethodId, paymentMethodId)
+        # headers = {
+        #     "Authorization": self.accessToken,
+        #     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        # }
         body_order = {
             "currency": currency,
             "productsString": self.cartString,

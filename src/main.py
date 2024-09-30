@@ -19,7 +19,7 @@ import bullion
 
 email = input("Enter your email: ")
 password = getpass.getpass("Enter your password: ")
-bullionstar_client = bullion.BullionStar(locationId=1, development=False)
+bullionstar_client = bullion.BullionStar(cuurency="SGD", locationId=1, development=False)
 bullionstar_client.login(email, password)
 print("1. Add to Shopping Cart")
 print("2. Update Shopping Cart")
