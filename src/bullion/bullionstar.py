@@ -396,12 +396,12 @@ class BullionStar:
         # }
         body_order = {
             "currency": currency,
-            "productsString": self.cartString,
-            "shippingMethodId": shippingMethodId,
-            "paymentMethodId": paymentMethodId
+            # "productsString": self.cartString,
+            # "shippingMethodId": shippingMethodId,
+            # "paymentMethodId": paymentMethodId
         }
         resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init', data=body_order)
-        data = resp.json()
+        data = resp.text
         print(data)
         return data
 
