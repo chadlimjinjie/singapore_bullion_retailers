@@ -1,6 +1,6 @@
 import getpass
 
-import bullion
+from bullion import BullionStar
 
 # while True:
 #     retailer = input("Enter retailer (bullionstar, silverbullion, stargrams): ")
@@ -16,10 +16,9 @@ import bullion
 480: 1 Gram of Gold - Bullion Savings Program (BSP)
 481: 1 Gram of Silver - Bullion Savings Program (BSP)
 '''
-
 email = input("Enter your email: ")
 password = getpass.getpass("Enter your password: ")
-bullionstar_client = bullion.BullionStar(cuurency="SGD", locationId=1, development=False)
+bullionstar_client = BullionStar(cuurency="SGD", locationId=1, development=False)
 bullionstar_client.login(email, password)
 print("1. Add to Shopping Cart")
 print("2. Update Shopping Cart")
