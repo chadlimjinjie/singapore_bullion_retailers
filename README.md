@@ -35,12 +35,10 @@ Shopping Cart API
 - Remove from Shopping Cart
 - Load All Shopping Carts
 
-(Development on hold)
-Silver Bullion Singapore Stargrams
+Silver Bullion Singapore Stargrams (Development on hold)
 - Login function
 
-(Development on hold)
-Silver Bullion Singapore
+Silver Bullion Singapore (Development on hold)
 - Login function (TODO)
 
 Roadmap
