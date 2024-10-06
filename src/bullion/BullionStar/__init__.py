@@ -261,7 +261,32 @@ class BullionStar:
     and to lock in on the current price before confirming the order.
     3. Call the /api/v2/buycheckout/confirm API to confirm the order with the latest priceLockToken (if any) obtained from the previous steps.
 
-        "shippingMethods": [
+    '''
+    # Initialize Order
+    def initialize_order(self, currency: str, shippingMethodId: int, paymentMethodId: int):
+        '''
+        Use this API to initialize a Buy order. Get the total order price, and obtain a priceLockToken to lock in on the order price before placing the order. This API also returns shipping and payment methods that are available for the order.
+        The priceLockToken is currently valid for three minutes; however this limit is subject to change.
+        '''
+        # print(currency, shippingMethodId, paymentMethodId)
+        # headers = {
+        #     "Authorization": self.accessToken,
+        #     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        # }
+        body_order = {
+            "currency": currency,
+            # "productsString": self.cartString,
+            # "shippingMethodId": shippingMethodId,
+            # "paymentMethodId": paymentMethodId
+        }
+        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init', data=body_order)
+        data = resp.text
+        print(data)
+        return data
+
+
+    '''
+    "shippingMethods": [
         {
             "id": 2,
             "title": "Vault Storage Singapore",
@@ -394,31 +419,6 @@ class BullionStar:
             "forceToCurrency": "LTC",
             "accountPayment": false
         }
-    ],
-
+    ],    
     '''
-    # Initialize Order
-    def initialize_order(self, currency: str, shippingMethodId: int, paymentMethodId: int):
-        '''
-        Use this API to initialize a Buy order. Get the total order price, and obtain a priceLockToken to lock in on the order price before placing the order. This API also returns shipping and payment methods that are available for the order.
-        The priceLockToken is currently valid for three minutes; however this limit is subject to change.
-        '''
-        # print(currency, shippingMethodId, paymentMethodId)
-        # headers = {
-        #     "Authorization": self.accessToken,
-        #     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        # }
-        body_order = {
-            "currency": currency,
-            # "productsString": self.cartString,
-            # "shippingMethodId": shippingMethodId,
-            # "paymentMethodId": paymentMethodId
-        }
-        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init', data=body_order)
-        data = resp.text
-        print(data)
-        return data
-
-
-
     
