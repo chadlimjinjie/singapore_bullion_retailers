@@ -191,10 +191,10 @@ class BullionStar:
 
         
         for entry in self.cartEntries:
-            if str(productId) == entry["productId"]:
-                entry["quantity"] = quantity
+            if str(productId) == entry['productId']:
+                entry['quantity'] = quantity
 
-        cartString = ",".join([f"{entry["productId"]},{entry["quantity"]}" for entry in self.cartEntries])
+        cartString = ",".join([f"{entry['productId']},{entry['quantity']}" for entry in self.cartEntries])
         
         body_cart = {
             "locationId": self.locationId,
