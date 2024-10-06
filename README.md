@@ -39,6 +39,15 @@ invalidate_response = bullionstar_client.invalidate()
 Shopping Cart API
 - Refresh Shopping Cart
 - Add to Shopping Cart
+
+| ID | Item |
+| -------- | ------- |
+| 480 | 1 Gram of Gold - Bullion Savings Program (BSP) |
+| 481 | 1 Gram of Silver - Bullion Savings Program (BSP) |
+IMPORTANT!!! Product ID are different across location
+```python
+cart_response = bullionstar_client.add_to_shopping_cart(productId=481, quantity=32)
+```
 - Update Shopping Cart (unstable)
 - Remove from Shopping Cart (unstable)
 - Load All Shopping Carts

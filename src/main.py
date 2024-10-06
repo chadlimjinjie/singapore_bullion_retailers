@@ -13,10 +13,7 @@ def display_menu():
     print("7. Initialize Order")
     print("8. Display Option Menu")
 
-'''
-480: 1 Gram of Gold - Bullion Savings Program (BSP)
-481: 1 Gram of Silver - Bullion Savings Program (BSP)
-'''
+
 email = os.getenv('BULLIONSTAR_EMAIL')
 password = os.getenv('BULLIONSTAR_PASSWORD')
 # password = getpass.getpass("Enter your password: ")
