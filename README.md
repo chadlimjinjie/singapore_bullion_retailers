@@ -27,13 +27,13 @@ authToken, salt = bullionstar_client.initialize('example@example.com')
 ```python
 hashedPassword = BullionStar.hashPassword(password)
 encryptedPassword = BullionStar.encryptPassword(salt, hashedPassword)
-data_authenticate = bullionstar_client.authenticate(authToken, encryptedPassword)
+authenticate_response = bullionstar_client.authenticate(authToken, encryptedPassword)
 ```
 - Perform Two-factor Authentication
 - Resend Two-factor Authentication Code
 - Invalidate Access Token
 ```python
-data_invalidate = bullionstar_client.invalidate()
+invalidate_response = bullionstar_client.invalidate()
 ```
 
 Shopping Cart API
@@ -49,11 +49,32 @@ Buy Checkout API (in-development)
 - Confirm Order
 - Confirm Order and Create Account
 
+
 Silver Bullion Singapore Stargrams (Development on hold)
-- Login function
+```python
+# import the module
+from bullion import StarGrams
+```
+StarGrams Object
+```python
+# Creates a http session
+stargrams_client = StarGrams()
+```
+- Login
+```python
+login_response = stargrams_client.login('example@example.com', 'some_password')
+```
+- 2FA
+```python
+```
+- User
+```python
+```
+
 
 Silver Bullion Singapore (Development on hold)
 - Login function (TODO)
+
 
 Roadmap
 - Retailers onboarding

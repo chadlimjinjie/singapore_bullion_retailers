@@ -1,6 +1,6 @@
 import hashlib
 import requests
-from requests.sessions import Session
+from requests import Session
 
 '''
 https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name=root&currency=SGD&apg=-1
@@ -91,6 +91,9 @@ class BullionStar:
 
 
     async def authenticate_2fa(self, twoFactorToken: str, code: str):
+        '''
+        Use this API to perform SMS-based two-factor authentication (2FA) to generate an access token. This must be preceded by the /auth/v1/authenticate API.
+        '''
         body_authenticate_2fa = {
             "twoFactorToken": twoFactorToken,
             "code": code
