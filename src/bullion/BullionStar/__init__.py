@@ -85,9 +85,6 @@ class BullionStar:
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticate', data=body_authenticate) 
         data = resp.json()
         print(resp.status_code, data)
-        
-        if data['status'] == 1:
-            raise Exception(data)
             
         self.accessToken = data["accessToken"]
         return data
