@@ -37,9 +37,15 @@ data_invalidate = bullionstar_client.invalidate()
 Shopping Cart API
 - Refresh Shopping Cart
 - Add to Shopping Cart
-- Update Shopping Cart
-- Remove from Shopping Cart
+- Update Shopping Cart (Unstable)
+- Remove from Shopping Cart (Unstable)
 - Load All Shopping Carts
+
+Buy Checkout API (in-development)
+- Initialize Order
+- Update Order
+- Confirm Order
+- Confirm Order and Create Account
 
 Silver Bullion Singapore Stargrams (Development on hold)
 - Login function
