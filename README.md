@@ -72,7 +72,7 @@ login_response = stargrams_client.login('example@example.com', 'some_password')
 ``` -->
 
 
-Silver Bullion Singapore (Development on hold)
+Silver Bullion Singapore (development on hold)
 - Login function
 
 

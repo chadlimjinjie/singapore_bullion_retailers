@@ -1,3 +1,4 @@
+import os
 import getpass
 
 from bullion import BullionStar
@@ -16,8 +17,9 @@ def display_menu():
 480: 1 Gram of Gold - Bullion Savings Program (BSP)
 481: 1 Gram of Silver - Bullion Savings Program (BSP)
 '''
-email = input("Enter your email: ")
-password = getpass.getpass("Enter your password: ")
+email = os.getenv('BULLIONSTAR_EMAIL')
+password = os.getenv('BULLIONSTAR_PASSWORD')
+# password = getpass.getpass("Enter your password: ")
 bullionstar_client = BullionStar(cuurency='SGD', locationId=1, development=False)
 bullionstar_client.login(email, password)
 display_menu()

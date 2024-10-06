@@ -17,7 +17,7 @@ class BullionStar:
 
         development: 
         '''
-        self.uri = 'testapi.bullionstar.com' if development else 'services.bullionstar.com' # services.bullionstar.com/api.bullionstar.com
+        self.uri = 'testapi.bullionstar.com' if development else 'api.bullionstar.com' # services.bullionstar.com/api.bullionstar.com
         self.session: Session = requests.Session()
         self.apiKey: str = apiKey
         self.accessToken: str = ''
@@ -183,8 +183,10 @@ class BullionStar:
         Use this API to update the user's shopping cart contents; usually required when updating the quantity for products that have already been added to the shopping cart.
         '''
         headers = {
-            "Authorization": self.accessToken,
-            "Content-Type": "application/json; charset=UTF-8"
+            ':authority:': 'services.bullionstar.com',
+            'Authorization': self.accessToken,
+            'Content-Type': 'application/json; charset=UTF-8',
+            
         }
 
         
@@ -200,6 +202,8 @@ class BullionStar:
         }
         
         resp = self.session.put(f'https://{self.uri}/product/v1/shoppingcart/item/{productId}', headers=headers, json=body_cart)
+        print(resp)
+        print(resp.text, resp.content)
         data = resp.json()
         if data:
             self.cartString = data["cartString"]
