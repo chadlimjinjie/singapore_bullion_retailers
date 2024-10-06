@@ -25,7 +25,9 @@ authToken, salt = bullionstar_client.initialize('example@example.com')
 ```
 - Perform Authentication
 ```python
-data_authenticate = bullionstar_client.authenticate(authToken, BullionStar.encryptPassword(salt, BullionStar.hashPassword(password)))
+hashedPassword = BullionStar.hashPassword(password)
+encryptedPassword = BullionStar.encryptPassword(salt, hashedPassword)
+data_authenticate = bullionstar_client.authenticate(authToken, encryptedPassword)
 ```
 - Perform Two-factor Authentication
 - Resend Two-factor Authentication Code
