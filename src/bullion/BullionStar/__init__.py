@@ -8,24 +8,33 @@ https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name
 
 class BullionStar:
     def __init__(self, cuurency: str, locationId: int = None, apiKey: str = None, development: bool = True) -> None:
-        self.uri = "testapi.bullionstar.com" if development else "services.bullionstar.com" # services.bullionstar.com/api.bullionstar.com
+        '''
+        cuurency: SGD USD EUR GBP AUD NZD SEK JPY BTC BCH ETH LTC
+
+        locationId: {1: Singapore, 3: New Zealand}
+
+        apiKey (optional): 
+
+        development: 
+        '''
+        self.uri = 'testapi.bullionstar.com' if development else 'services.bullionstar.com' # services.bullionstar.com/api.bullionstar.com
         self.session: Session = requests.Session()
         self.apiKey: str = apiKey
-        self.accessToken: str = ""
+        self.accessToken: str = ''
         self.cartEntries: list = []
-        self.cartString: str = ""
+        self.cartString: str = ''
         self.locationId: int = locationId
         pass
 
     
     def login(self, email: str, password: str):
         data_initialize = self.initialize(email)
-        data_authenticate = self.authenticate(data_initialize["authToken"], self.encryptPassword(data_initialize["salt"], self.hashPassword(password)))
+        data_authenticate = self.authenticate(data_initialize['authToken'], self.encryptPassword(data_initialize['salt'], self.hashPassword(password)))
         data_load_all_shopping_carts = self.load_all_shopping_carts()
         # print(data_load_all_shopping_carts)
         if data_load_all_shopping_carts:
-            self.cartEntries = data_load_all_shopping_carts["response"]["cartEntries"]
-            self.cartString = data_load_all_shopping_carts["response"]["cartString"]
+            self.cartEntries = data_load_all_shopping_carts['response']['cartEntries']
+            self.cartString = data_load_all_shopping_carts['response']['cartString']
         return data_authenticate
 
 

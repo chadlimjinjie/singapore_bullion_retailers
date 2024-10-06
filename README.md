@@ -5,13 +5,17 @@ Programmatic functions for accessing Singapore bullion retailers API
 
 BullionStar Singapore https://www.bullionstar.com/developer/docs/api/
 
+
+```python
+# import the module
+from bullion import BullionStar
+```
+
 BullionStar Object
 
 ```python
-from bullion import BullionStar
-
 # Creates a http session
-bullionstar_client = bullion.BullionStar(cuurency='SGD', locationId=1)
+bullionstar_client = BullionStar(cuurency='SGD', locationId=1)
 ```
 
 Authentication API
