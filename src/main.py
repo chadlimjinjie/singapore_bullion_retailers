@@ -2,15 +2,6 @@ import getpass
 
 from bullion import BullionStar
 
-# while True:
-#     retailer = input("Enter retailer (bullionstar, silverbullion, stargrams): ")
-#     retailer = retailer if retailer != "" else "bullionstar"
-#     email = input("Enter your email: ")
-#     password = getpass.getpass("Enter your password: ")
-#     login_data = asyncio.run(bullion.login(email, password, retailer))
-#     if login_data["success"]:
-#         break
-
 def display_menu():
     print("1. Add to Shopping Cart")
     print("2. Update Shopping Cart")
@@ -19,6 +10,7 @@ def display_menu():
     print("5. Load All Shopping Carts")
     print("6. Display Shopping Cart")
     print("7. Initialize Order")
+    print("8. Display Option Menu")
 
 '''
 480: 1 Gram of Gold - Bullion Savings Program (BSP)

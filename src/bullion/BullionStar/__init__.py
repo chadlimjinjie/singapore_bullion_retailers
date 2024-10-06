@@ -28,8 +28,8 @@ class BullionStar:
 
     
     def login(self, email: str, password: str):
-        data_initialize = self.initialize(email)
-        data_authenticate = self.authenticate(data_initialize['authToken'], self.encryptPassword(data_initialize['salt'], self.hashPassword(password)))
+        authToken, salt = self.initialize(email)
+        data_authenticate = self.authenticate(authToken, self.encryptPassword(salt, self.hashPassword(password)))
         data_load_all_shopping_carts = self.load_all_shopping_carts()
         # print(data_load_all_shopping_carts)
         if data_load_all_shopping_carts:
@@ -56,7 +56,7 @@ class BullionStar:
         
         # print(resp.status_code, data)
         
-        return data
+        return (data['authToken'], data['salt'])
 
 
     def hashPassword(self, password: str):
@@ -84,11 +84,12 @@ class BullionStar:
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticate', data=body_authenticate) 
         data = resp.json()
-        # print(resp.status_code, data)
+        print(resp.status_code, data)
         
-        if data:
-            self.accessToken = data["accessToken"]
-        
+        if data['status'] == 1:
+            raise Exception(data)
+            
+        self.accessToken = data["accessToken"]
         return data
 
 
