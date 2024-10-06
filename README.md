@@ -21,16 +21,18 @@ bullionstar_client = BullionStar(cuurency='SGD', locationId=1)
 Authentication API
 - Initialize Authentication
 ```python
-data_initialize = bullionstar_client.initialize('example@example.com') # TODO: authToken, salt = bullionstar_client.initialize('example@example.com')
+authToken, salt = bullionstar_client.initialize('example@example.com')
 ```
 - Perform Authentication
 ```python
-data_authenticate = bullionstar_client.authenticate(data_initialize['authToken'], BullionStar.encryptPassword(data_initialize['salt'], BullionStar.hashPassword(password))) 
-# TODO: data_authenticate = bullionstar_client.authenticate(authToken, BullionStar.encryptPassword(salt, BullionStar.hashPassword(password)))
+data_authenticate = bullionstar_client.authenticate(authToken, BullionStar.encryptPassword(salt, BullionStar.hashPassword(password)))
 ```
 - Perform Two-factor Authentication
 - Resend Two-factor Authentication Code
 - Invalidate Access Token
+```python
+data_invalidate = bullionstar_client.invalidate()
+```
 
 Shopping Cart API
 - Refresh Shopping Cart

@@ -121,7 +121,7 @@ class BullionStar:
         resp = self.session.post(f'https://{self.uri}/auth/v1/invalidate', data=body_invalidate)
         data = resp.json()
         print(resp.status_code, data)
-        self.accessToken = ""
+        self.accessToken = ''
         return data
 
     
