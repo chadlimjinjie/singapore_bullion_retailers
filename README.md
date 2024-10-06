@@ -39,8 +39,8 @@ invalidate_response = bullionstar_client.invalidate()
 Shopping Cart API
 - Refresh Shopping Cart
 - Add to Shopping Cart
-- Update Shopping Cart (Unstable)
-- Remove from Shopping Cart (Unstable)
+- Update Shopping Cart (unstable)
+- Remove from Shopping Cart (unstable)
 - Load All Shopping Carts
 
 Buy Checkout API (in-development)
@@ -50,7 +50,7 @@ Buy Checkout API (in-development)
 - Confirm Order and Create Account
 
 
-Silver Bullion Singapore Stargrams (Development on hold)
+Silver Bullion Singapore Stargrams (development on hold)
 ```python
 # import the module
 from bullion import StarGrams
@@ -65,18 +65,14 @@ stargrams_client = StarGrams()
 login_response = stargrams_client.login('example@example.com', 'some_password')
 ```
 - 2FA
-```python
-```
+<!-- ```python
+``` -->
 - User
-```python
-```
+<!-- ```python
+``` -->
 
 
 Silver Bullion Singapore (Development on hold)
-- Login function (TODO)
+- Login function
 
 
-Roadmap
-- Retailers onboarding
-- To release as a python package on PyPi
-- Looking for passionate maintainers
