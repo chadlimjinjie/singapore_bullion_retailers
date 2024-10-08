@@ -1,5 +1,5 @@
 import hashlib
-import requests
+# import requests
 from requests import Session
 
 '''
@@ -18,7 +18,7 @@ class BullionStar:
         development: 
         '''
         self.uri = 'testapi.bullionstar.com' if development else 'api.bullionstar.com' # services.bullionstar.com/api.bullionstar.com
-        self.session: Session = requests.Session()
+        self.session: Session = Session()
         self.apiKey: str = apiKey
         self.accessToken: str = ''
         self.cartEntries: list = []
@@ -77,8 +77,8 @@ class BullionStar:
         body_authenticate = {
             "authToken": authToken,
             "encryptedPassword": encryptedPassword,
-            "valuation": "buy",
-            "locationId": "1",
+            # "valuation": "buy",
+            # "locationId": "1",
             "ignoreWarning": "false",
             "device": "D"
         }

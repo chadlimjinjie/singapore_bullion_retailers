@@ -13,6 +13,11 @@ from bullion import BullionStar
 
 BullionStar Object
 
+| locationId | Country |
+| -------- | ------- |
+| 1 | Singapore |
+| 3 | New Zealand |
+
 ```python
 # Creates a http session
 bullionstar_client = BullionStar(cuurency='SGD', locationId=1)
@@ -44,6 +49,7 @@ Shopping Cart API
 | -------- | ------- |
 | 480 | 1 Gram of Gold - Bullion Savings Program (BSP) |
 | 481 | 1 Gram of Silver - Bullion Savings Program (BSP) |
+
 IMPORTANT!!! Product ID are different across location
 ```python
 cart_response = bullionstar_client.add_to_shopping_cart(productId=481, quantity=32)

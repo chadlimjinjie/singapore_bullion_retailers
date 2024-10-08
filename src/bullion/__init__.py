@@ -1,6 +1,6 @@
-import bullion.SilverBullion.silverbullion
 from .BullionStar import BullionStar
 from .StarGrams import StarGrams
+from .SilverBullion import SilverBullion
 
 async def login(email: str, password: str, retailer: str):
 
