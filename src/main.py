@@ -1,10 +1,8 @@
 import os
 import getpass
 
-from bullion import BullionStar, SilverBullion
+from bullion import BullionStar
 
-# silverbullion_client = SilverBullion()
-# silverbullion_client.login('123', '123')
 
 def display_menu():
     print("1. Add to Shopping Cart")

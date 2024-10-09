@@ -1,7 +1,8 @@
   # Singapore Bullion Retailers API
 
-Programmatic functions for accessing Singapore bullion retailers API
+An open-source Python library for accessing Singapore bullion retailers API
 
+Designed for retail investors and businesses, this package streamlines the process of integrating with the bullion marketplace by abstracting complex API calls and providing intuitive functions to manage investments in gold, silver, and other precious metals.
 
 BullionStar Singapore https://www.bullionstar.com/developer/docs/api/
 
