@@ -257,12 +257,32 @@ class BullionStar:
         '''
 
         resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init?currency={currency}&shippingMethodId={shippingMethodId}&paymentMethodId={paymentMethodId}&locationId=1&productsString={self.cartString}')
+        # data = resp.json()
         data = resp.json()
-        print(data['address'])
-        print(data['costs'])
-        
+        # shippingMethods, shippingMethodId, paymentMethods, paymentMethodId, cart, costs = data['shippingMethods'], data['shippingMethodId'], data['paymentMethods'], data['paymentMethodId'], data['cart'], data['costs']
+        # initialized_order = InitializedOrder(shippingMethods, shippingMethodId, paymentMethods, paymentMethodId, cart, costs)
         return data
 
+    
+    # Confirm Order
+    def confirm_order(self):
+        '''
+        Use this API to confirm and place the order. If the confirm-order request is successful, the API returns a unique order ID and a URL to the order confirmation.
+
+        If no orderId or url is returned even though the request status is successful(status=0), this is likely due to an expired priceLockToken used in the request. Call the /api/v2/buycheckout/update API again to obtain a new token.
+        '''
+        return
+    
+    # Chart API
+    def get_current_spot_price_and_rate(self) -> None:
+        '''
+        Use this API to retrieve the current spot prices and rates for gold, silver, platinum, and palladium, which are usually updated very minute. The percentage changes are measured against the provided timeZoneId value in the selected currency.
+        '''
+        resp = self.session.get('https://{self.uri}/chart/v1/spot')
+        data = resp.json()
+        return data
+        
+    
     # Affiliate API
     def affiliate(self):
         '''
