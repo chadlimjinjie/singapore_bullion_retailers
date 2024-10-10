@@ -6,7 +6,7 @@ https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name
 '''
 
 class BullionStar:
-    def __init__(self, cuurency: str, locationId: int = None, apiKey: str = None, development: bool = True) -> None:
+    def __init__(self, currency: str, locationId: int = None, apiKey: str = None, development: bool = True) -> None:
         '''
         cuurency: SGD USD EUR GBP AUD NZD SEK JPY BTC BCH ETH LTC
 
@@ -16,7 +16,7 @@ class BullionStar:
 
         development: 
         '''
-        self.uri = 'testapi.bullionstar.com' if development else 'api.bullionstar.com' # services.bullionstar.com/api.bullionstar.com
+        self.uri = 'testapi.bullionstar.com' if development else 'services.bullionstar.com' # services.bullionstar.com/api.bullionstar.com
         self.session: Session = Session()
         self.apiKey: str = apiKey
         self.accessToken: str = ''
@@ -24,7 +24,12 @@ class BullionStar:
         self.cartString: str = ''
         self.locationId: int = locationId
         pass
-
+    
+    def shopping_cart_api_headers(self):
+        return {
+            'Authorization': self.accessToken,
+            'Content-Type': 'application/json; charset=UTF-8'
+        }
     
     def login(self, email: str, password: str):
         authToken, salt = self.initialize(email)
@@ -44,10 +49,10 @@ class BullionStar:
         Use this API to initialize the authentication process.
         '''
         body_initialize = {
-            "email": email,
-            "machineId": "EMV93wOBXXOUg04IOsKY",
-            # "ignoreWarning": "false",
-            # "device": "D"
+            'email': email,
+            'machineId': 'EMV93wOBXXOUg04IOsKY',
+            # 'ignoreWarning': 'false',
+            # 'device': 'D'
         }
 
         resp = self.session.post(f'https://{self.uri}/auth/v1/initialize', data=body_initialize)
@@ -74,18 +79,18 @@ class BullionStar:
         The authToken response item from the /auth/v1/initialize endpoint are required as inputs to this API.
         '''
         body_authenticate = {
-            "authToken": authToken,
-            "encryptedPassword": encryptedPassword,
-            # "valuation": "buy",
-            # "locationId": "1",
-            "ignoreWarning": "false",
-            "device": "D"
+            'authToken': authToken,
+            'encryptedPassword': encryptedPassword,
+            # 'valuation': 'buy',
+            # 'locationId': '1',
+            'ignoreWarning': 'false',
+            'device': 'D'
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticate', data=body_authenticate) 
         data = resp.json()
         print(resp.status_code, data)
             
-        self.accessToken = data["accessToken"]
+        self.accessToken = data['accessToken']
         return data
 
 
@@ -94,8 +99,8 @@ class BullionStar:
         Use this API to perform SMS-based two-factor authentication (2FA) to generate an access token. This must be preceded by the /auth/v1/authenticate API.
         '''
         body_authenticate_2fa = {
-            "twoFactorToken": twoFactorToken,
-            "code": code
+            'twoFactorToken': twoFactorToken,
+            'code': code
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticateTwoFactor', data=body_authenticate_2fa)
         data = resp.json()
@@ -105,7 +110,7 @@ class BullionStar:
 
     async def authenticateTwoFactorResendCode(self, twoFactorToken: str):
         body_authenticate_2fa = {
-            "twoFactorToken": twoFactorToken
+            'twoFactorToken': twoFactorToken
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticateTwoFactorResendCode', data=body_authenticate_2fa)
         data = resp.json()
@@ -116,7 +121,7 @@ class BullionStar:
 
     async def invalidate(self):
         body_invalidate = {
-            "accessToken": self.accessToken
+            'accessToken': self.accessToken
         }
         
         
@@ -140,13 +145,10 @@ class BullionStar:
         '''
         Use this API to refresh the user's shopping cart contents; usually required when updating the product prices and quantity.
         '''
-        headers = {
-            "Authorization": self.accessToken,
-            "Content-Type": "application/json; charset=UTF-8"
-        }
+        headers = self.shopping_cart_api_headers()
         body_cart = {
-            "locationId": self.locationId,
-            "cartString": self.cartString
+            'locationId': self.locationId,
+            'cartString': self.cartString
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart', headers=headers, json=body_cart)
         data = resp.json()
@@ -157,22 +159,19 @@ class BullionStar:
         '''
         Use this API to add a product to the user's shopping cart.
         '''
-        headers = {
-            "Authorization": self.accessToken,
-            "Content-Type": "application/json; charset=UTF-8"
-        }
+        headers = self.shopping_cart_api_headers()
         body_cart = {
-            "productId": productId,
-            "quantity": quantity,
-            "locationId": self.locationId,
-            "cartString": self.cartString,
-            "accessToken" : self.accessToken,
+            'productId': productId,
+            'quantity': quantity,
+            'locationId': self.locationId,
+            'cartString': self.cartString,
+            'accessToken' : self.accessToken,
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart/item', headers=headers, json=body_cart)
         data = resp.json()
         if data:
-            self.cartEntries = data["cartEntries"]
-            self.cartString = data["cartString"]
+            self.cartEntries = data['cartEntries']
+            self.cartString = data['cartString']
             
         return data
     
@@ -181,23 +180,18 @@ class BullionStar:
         '''
         Use this API to update the user's shopping cart contents; usually required when updating the quantity for products that have already been added to the shopping cart.
         '''
-        headers = {
-            ':authority:': 'services.bullionstar.com',
-            'Authorization': self.accessToken,
-            'Content-Type': 'application/json; charset=UTF-8',
-            
-        }
+        headers = self.shopping_cart_api_headers()
 
         
         for entry in self.cartEntries:
             if str(productId) == entry['productId']:
                 entry['quantity'] = quantity
 
-        cartString = ",".join([f"{entry['productId']},{entry['quantity']}" for entry in self.cartEntries])
+        cartString = ','.join([f'{entry['productId']},{entry['quantity']}' for entry in self.cartEntries])
         
         body_cart = {
-            "locationId": self.locationId,
-            "cartString": cartString
+            'locationId': self.locationId,
+            'cartString': cartString
         }
         
         resp = self.session.put(f'https://{self.uri}/product/v1/shoppingcart/item/{productId}', headers=headers, json=body_cart)
@@ -205,7 +199,7 @@ class BullionStar:
         print(resp.text, resp.content)
         data = resp.json()
         if data:
-            self.cartString = data["cartString"]
+            self.cartString = data['cartString']
         
         return data
     
@@ -214,31 +208,25 @@ class BullionStar:
         '''
         Use this API to remove a product from the user's shopping cart.
         '''
-        headers = {
-            "Authorization": self.accessToken,
-            "Content-Type": "application/json; charset=UTF-8"
-        }
+        headers = self.shopping_cart_api_headers()
         body_cart = {
-            "locationId": self.locationId,
-            "cartString": self.cartString,
-            "accessToken" : self.accessToken,
+            'locationId': self.locationId,
+            'cartString': self.cartString,
+            'accessToken' : self.accessToken,
         }
         resp = self.session.delete(f'https://{self.uri}/product/v1/shoppingcart/item/{productId}', headers=headers, json=body_cart)
         data = resp.json()
         if data:
-            self.cartEntries = data["cartEntries"]
-            self.cartString = data["cartString"]
+            self.cartEntries = data['cartEntries']
+            self.cartString = data['cartString']
         return data
     
     # Load All Shopping Carts
     def load_all_shopping_carts(self):
-        headers = {
-            "Authorization": self.accessToken,
-            "Content-Type": "application/json; charset=UTF-8"
-        }
+        headers = self.shopping_cart_api_headers()
         body_cart = {
-            "locationId": self.locationId,
-            # "cartString": self.cartString
+            'locationId': self.locationId,
+            # 'cartString': self.cartString
         }
         resp = self.session.post(f'https://{self.uri}/product/v1/shoppingcart/all', headers=headers, json=body_cart)
         data = resp.json()
@@ -267,157 +255,31 @@ class BullionStar:
         Use this API to initialize a Buy order. Get the total order price, and obtain a priceLockToken to lock in on the order price before placing the order. This API also returns shipping and payment methods that are available for the order.
         The priceLockToken is currently valid for three minutes; however this limit is subject to change.
         '''
-        # print(currency, shippingMethodId, paymentMethodId)
-        # headers = {
-        #     "Authorization": self.accessToken,
-        #     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        # }
-        body_order = {
-            "currency": currency,
-            # "productsString": self.cartString,
-            # "shippingMethodId": shippingMethodId,
-            # "paymentMethodId": paymentMethodId
-        }
-        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init', data=body_order)
+
+        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init?currency={currency}&shippingMethodId={shippingMethodId}&paymentMethodId={paymentMethodId}&locationId=1&productsString={self.cartString}')
+        data = resp.json()
+        print(data['address'])
+        print(data['costs'])
+        
+        return data
+
+    # Affiliate API
+    def affiliate(self):
+        '''
+        Use this API to retrieve transaction and balance information for the Affiliate Program. Only applicable to affiliate accounts.
+        '''
+        resp = self.session.get(f'https://{self.uri}/api/v1/referral/info')
         data = resp.text
         print(data)
         return data
 
+    # Announcements API
+    def latest_announcements(self, visitedDays: int, geoCountry: str, dismissed: int):
+        '''
+        Use this API to get relevant announcements from BullionStar.
+        '''
+        resp = self.session.get(f'https://{self.uri}/account/v1/announcement')
+        data = resp.text
+        print(data)
+        return data
 
-    '''
-    "shippingMethods": [
-        {
-            "id": 2,
-            "title": "Vault Storage Singapore",
-            "description": "Store bullion safely with BullionStar as your Vault Storage provider. You can sell or withdraw your bullion by placing online orders 24/7.",
-            "descriptionMobile": "Vault Storage with BullionStar. You can sell or withdraw stored bullion anytime by placing online orders."
-        },
-        {
-            "id": 3,
-            "title": "Personal Collection (Pick-up) Singapore",
-            "description": "You will receive an e-mail payment confirmation from us once your payment has been processed. After you have received the payment confirmation, you may proceed to our bullion center at the following location to pick up your bullion. Please bring your ID. No appointment is necessary.<br /><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 0;margin-bottom: 12px;margin-top: 12px;\"><tbody><tr><td style=\"text-align: center;\" width=\"50px\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: block\"><img alt=\"\" src=\"https://static.bullionstar.com/img/email/google-map.png\" style=\"height: 40px;\" width=\"28\"></a></td><td style=\"text-align: left;\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: inline-block; font-size: 14px; line-height: 17px; font-weight: bold; text-decoration: none; color: black;\">45 New Bridge Road<br>Singapore 059398</a></td></tr></tbody></table><table><tbody><tr><td style=\"padding:0;font-family:Arial,sans-serif;\"><p style=\"font-weight: bold; margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Opening Hours:</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Mondays - Saturdays: 11 am to 7 pm</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Closed on Sundays and Public Holidays</p></td></tr></tbody></table>",
-            "descriptionMobile": "You will receive an e-mail payment confirmation from us once your payment has been processed. After you have received the payment confirmation, you may proceed to our bullion center at 45 New Bridge Road to pick up your bullion. Please bring your ID. No appointment is necessary."
-        },
-        {
-            "id": 1,
-            "title": "Shipping by Courier from Singapore",
-            "description": "Shipping by Courier to your delivery address.<br /><br />The shipping rates are based on your shipping destination country. Your current shipping country is: <span class=\"shippingDestinationCountryAnchor\"></span>. <span class=\"cc-condition\">To change shipping address/country, please check the checkbox for \"Ship to a Different Address\" under \"Customer Information\" and fill in your shipping address and country.</span>",
-            "descriptionMobile": "The shipping cost will be visible on the next page and is based on your shipping destination country. Your current shipping country is: <span class=\"shippingDestinationCountryAnchor\"></span>. <span class=\"cc-condition\">To change shipping address/country, please check the checkbox for \"Ship to a Different Address\" below and fill in your shipping address and country.</span>"
-        }
-    ],
-    "paymentMethods": [
-        {
-            "id": 37,
-            "title": "PayNow Payment",
-            "description": "The QR code and the Unique Entity Number - UEN will be visible on the order confirmation page and in the order confirmation e-mail. Maximum amount: SGD 200,000.",
-            "descriptionMobile": "The QR code and the Unique Entity Number - UEN will be visible on the order confirmation page and in the order confirmation e-mail. Maximum amount: SGD 200,000.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 24,
-            "title": "SGD Bank Transfer - OCBC",
-            "description": "The bank account details will be visible on the order confirmation page and in the order confirmation e-mail.",
-            "descriptionMobile": "The bank account details will be visible on the order confirmation page and in the order confirmation e-mail.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 13,
-            "title": "SGD Bank Transfer - DBS Bank",
-            "description": "The bank account details will be visible on the order confirmation page and in the order confirmation e-mail.",
-            "descriptionMobile": "The bank account details will be visible on the order confirmation page and in the order confirmation e-mail.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 2,
-            "title": "SGD Bank Transfer - UOB",
-            "description": "The bank account details will be visible on the order confirmation page and in the order confirmation e-mail.",
-            "descriptionMobile": "The bank account details will be visible on the order confirmation page and in the order confirmation e-mail.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 20,
-            "title": "SGD BullionStar Account",
-            "description": "Funds for your order will be debited from your BullionStar account. Your current BullionStar account balance is S$0.00.",
-            "descriptionMobile": "Funds for your order will be debited from your BullionStar account. Your current BullionStar account balance is S$0.00.",
-            "forceToCurrency": "",
-            "accountPayment": true
-        },
-        {
-            "id": 5,
-            "title": "SGD Cash Payment",
-            "description": "The payment has to be settled within one business day of the order confirmation.  <br /><br />Please proceed to our shop at the following location to make payment. No appointment is necessary. <br /><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 0;margin-bottom: 12px;margin-top: 12px;\"><tbody><tr><td style=\"text-align: center;\" width=\"50px\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: block\"><img alt=\"\" src=\"https://static.bullionstar.com/img/email/google-map.png\" style=\"height: 40px;\" width=\"28\"></a></td><td style=\"text-align: left;\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: inline-block; font-size: 14px; line-height: 17px; font-weight: bold; text-decoration: none; color: black;\">45 New Bridge Road<br>Singapore 059398</a></td></tr></tbody></table><table><tbody><tr><td style=\"padding:0;font-family:Arial,sans-serif;\"><p style=\"font-weight: bold; margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Opening Hours:</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Mondays - Saturdays: 11 am to 7 pm</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Closed on Sundays and Public Holidays</p></td></tr></tbody></table>",
-            "descriptionMobile": "Please proceed to our shop at 45 New Bridge Road to make payment within one business day of placing your order.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 10,
-            "title": "NETS",
-            "description": "Please note that the product price is 1% higher when you select NETS payment. If you would like to avoid the extra cost, please choose another payment method such as bank transfer, PayNow or SGD cash payment. The default payment limit for most NETS cardholders is SGD 2000. Enquire with your bank to check or raise your limit. The payment has to be settled within one business day of the order confirmation.<br /><br />Please proceed to our shop at the following location to make payment. No appointment is necessary. <br /><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 0;margin-bottom: 12px;margin-top: 12px;\"><tbody><tr><td style=\"text-align: center;\" width=\"50px\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: block\"><img alt=\"\" src=\"https://static.bullionstar.com/img/email/google-map.png\" style=\"height: 40px;\" width=\"28\"></a></td><td style=\"text-align: left;\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: inline-block; font-size: 14px; line-height: 17px; font-weight: bold; text-decoration: none; color: black;\">45 New Bridge Road<br>Singapore 059398</a></td></tr></tbody></table><table><tbody><tr><td style=\"padding:0;font-family:Arial,sans-serif;\"><p style=\"font-weight: bold; margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Opening Hours:</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Mondays - Saturdays: 11 am to 7 pm</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Closed on Sundays and Public Holidays</p></td></tr></tbody></table>",
-            "descriptionMobile": "Please note that the product price is 1% higher when you select NETS payment. If you would like to avoid the extra cost, please choose another payment method such as bank transfer, PayNow or SGD cash payment. The default payment limit for most NETS cardholders is SGD 2000. Enquire with your bank to check or raise your limit. Please proceed to our shop at 45 New Bridge Road to make payment within one business day of placing your order.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 49,
-            "title": "Online Credit/Debit Card Payment in SGD",
-            "description": "We accept Mastercard, VISA, JCB and UnionPay. Maximum amount: SGD 75,000. Please note that the price is 4% higher when you select online card payment. If you would like to avoid the extra cost, please choose another payment method such as bank transfer, PayNow or SGD cash payment.<br /><br />Please allow up to 24 hours for the card transaction to be processed. ",
-            "descriptionMobile": "We accept Mastercard, VISA, JCB and UnionPay. Maximum amount: SGD 75,000. Please note that the price is 4% higher when you select online card payment. If you would like to avoid the extra cost, please choose another payment method such as bank transfer, PayNow or SGD cash payment.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 25,
-            "title": "Retail Shop Credit/Debit Card Payment in SGD (Settlement in retail shop)",
-            "description": "We accept Visa, Mastercard and UnionPay. Please note that the price is 3.3% higher when you select card payment. If you would like to avoid the extra cost, please choose another payment method such as bank transfer, PayNow or SGD cash payment. The payment has to be settled within one business day of the order confirmation. <br /><br />Please proceed to our shop at the following location to make payment with your credit/debit card.<br /><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 0;margin-bottom: 12px;margin-top: 12px;\"><tbody><tr><td style=\"text-align: center;\" width=\"50px\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: block\"><img alt=\"\" src=\"https://static.bullionstar.com/img/email/google-map.png\" style=\"height: 40px;\" width=\"28\"></a></td><td style=\"text-align: left;\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: inline-block; font-size: 14px; line-height: 17px; font-weight: bold; text-decoration: none; color: black;\">45 New Bridge Road<br>Singapore 059398</a></td></tr></tbody></table><table><tbody><tr><td style=\"padding:0;font-family:Arial,sans-serif;\"><p style=\"font-weight: bold; margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Opening Hours:</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Mondays - Saturdays: 11 am to 7 pm</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Closed on Sundays and Public Holidays</p></td></tr></tbody></table>",
-            "descriptionMobile": "We accept Visa, Mastercard and UnionPay. Please note that the price is 3.3% higher when you select card payment. If you would like to avoid the extra cost, please choose another payment method such as bank transfer, PayNow or SGD cash payment. Please proceed to our shop at 45 New Bridge Road to make your card payment within one business day of placing your order. We accept Visa, Mastercard or UnionPay.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 6,
-            "title": "SGD Cheque Payment ",
-            "description": "Please make your cheque payable to: BullionStar Pte Ltd.<br /><br />Please hand over the cheque to us within one business day of the order confirmation. If you mail the cheque, it has to be mailed to us within one business day. Please note that only cheques issued by Singaporean banks are accepted and that all orders paid by cheque are subject to a holding period until the cheque has cleared.<br /><br />To hand over your cheque, please proceed to our shop at the below location. No appointment is necessary. If you mail your cheque, send it to the address as stated below: <br /><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 0;margin-bottom: 12px;margin-top: 12px;\"><tbody><tr><td style=\"text-align: center;\" width=\"50px\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: block\"><img alt=\"\" src=\"https://static.bullionstar.com/img/email/google-map.png\" style=\"height: 40px;\" width=\"28\"></a></td><td style=\"text-align: left;\"><a href=\"https://www.google.com/maps/place/45+New+Bridge+Rd,+BullionStar,+Singapore+059398/@1.2882241,103.8467937,17z/data=!4m2!3m1!1s0x31da19102f0905d1:0x84514482d11d3320\" target=\"_blank\" style=\"display: inline-block; font-size: 14px; line-height: 17px; font-weight: bold; text-decoration: none; color: black;\">BullionStar Pte Ltd<br>45 New Bridge Road<br>Singapore 059398</a></td></tr></tbody></table><table><tbody><tr><td style=\"padding:0;font-family:Arial,sans-serif;\"><p style=\"font-weight: bold; margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Opening Hours:</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Mondays - Saturdays: 11 am to 7 pm</p><p style=\"margin: 0 0 2px; font-size: 14px; line-height: 17px;\">Closed on Sundays and Public Holidays</p></td></tr></tbody></table>",
-            "descriptionMobile": "Please proceed to our shop at 45 New Bridge Road to hand over the cheque to us within one business day of placing your order.",
-            "forceToCurrency": "",
-            "accountPayment": false
-        },
-        {
-            "id": 17,
-            "title": "Bitcoin",
-            "description": "You will receive the bitcoin address, to which you send your bitcoin payment, on the order confirmation page after placing your order.  <br /><br />The bitcoin payment must be initiated within 20 minutes of the order confirmation.<br /><br />You will receive an e-mail when we have processed your payment. We will thereafter handle your order.",
-            "descriptionMobile": "You will receive the bitcoin address, to which you send your bitcoin payment, on the order confirmation page after placing your order. The bitcoin payment must be initiated within 20 minutes of the order confirmation.",
-            "forceToCurrency": "BTC",
-            "accountPayment": false
-        },
-        {
-            "id": 34,
-            "title": "Bitcoin Cash",
-            "description": "You will receive the Bitcoin Cash address, to which you send your Bitcoin Cash payment, on the order confirmation page after placing your order. Only send coins from Bitcoin Cash (Node). Do NOT send coins from the Bitcoin Cash ABC and Bitcoin Cash SV chain to BullionStar as they are not accepted.<br /><br />The Bitcoin Cash payment must be initiated within 20 minutes of the order confirmation.<br /><br />You will receive an e-mail when we have processed your payment. We will thereafter handle your order.",
-            "descriptionMobile": "You will receive the Bitcoin Cash address, to which you send your Bitcoin Cash payment, on the order confirmation page after placing your order. Only send coins from Bitcoin Cash (Node). Do NOT send coins from the Bitcoin Cash ABC and Bitcoin Cash SV chain to BullionStar as they are not accepted. The Bitcoin Cash payment must be initiated within 20 minutes of the order confirmation.",
-            "forceToCurrency": "BCH",
-            "accountPayment": false
-        },
-        {
-            "id": 35,
-            "title": "Ethereum",
-            "description": "You will receive the ethereum address, to which you send your ethereum payment, on the order confirmation page after placing your order. <br /><br />The Ethereum payment must be initiated within 20 minutes of the order confirmation through the Ethereum Mainnet.<br /><br />You will receive an e-mail when we have processed your payment. We will thereafter handle your order.",
-            "descriptionMobile": "You will receive the ethereum address, to which you send your ethereum payment, on the order confirmation page after placing your order. The Ethereum payment must be initiated within 20 minutes of the order confirmation through the Ethereum Mainnet.",
-            "forceToCurrency": "ETH",
-            "accountPayment": false
-        },
-        {
-            "id": 36,
-            "title": "Litecoin",
-            "description": "You will receive the litecoin address, to which you send your litecoin payment, on the order confirmation page after placing your order. <br /><br />The litecoin payment must be initiated within 20 minutes of the order confirmation.<br /><br />You will receive an e-mail when we have processed your payment. We will thereafter handle your order.",
-            "descriptionMobile": "You will receive the litecoin address, to which you send your litecoin payment, on the order confirmation page after placing your order. The litecoin payment must be initiated within 20 minutes of the order confirmation.",
-            "forceToCurrency": "LTC",
-            "accountPayment": false
-        }
-    ],    
-    '''
-    

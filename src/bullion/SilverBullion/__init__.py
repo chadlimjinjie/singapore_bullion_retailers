@@ -48,9 +48,38 @@ class SilverBullion():
         #     "UsernameEmail": email,
         #     "Password": password
         # }
-        response = self.session.post('https://www.silverbullion.com.sg/Account/Login', data=f'UsernameEmail={email}&Password={password}')
+                
+        get_page = self.session.get('https://www.silverbullion.com.sg/Account/Login')
+        page_cookies = get_page.cookies
+        __RequestVerificationToken = page_cookies.get('__RequestVerificationToken')
+        print(__RequestVerificationToken)
+        response = self.session.post('https://www.silverbullion.com.sg/Account/Login', data=f'__RequestVerificationToken={__RequestVerificationToken}&ReturnUrl=&CopyCart=False&TokenCode=&CaptchaToken=&VerifyMethod=&UsernameEmail={email}&Password={password}')
+        
         data = response.text
         print(data)
         return data
 
 
+# fetch("https://www.silverbullion.com.sg/Account/Login", {
+#   "headers": {
+#     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+#     "accept-language": "en-US,en;q=0.9",
+#     "cache-control": "max-age=0",
+#     "content-type": "application/x-www-form-urlencoded",
+#     "priority": "u=0, i",
+#     "sec-ch-ua": "\"Brave\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\"",
+#     "sec-ch-ua-mobile": "?0",
+#     "sec-ch-ua-platform": "\"Windows\"",
+#     "sec-fetch-dest": "document",
+#     "sec-fetch-mode": "navigate",
+#     "sec-fetch-site": "same-origin",
+#     "sec-fetch-user": "?1",
+#     "sec-gpc": "1",
+#     "upgrade-insecure-requests": "1",
+#     "cookie": ".ASPXANONYMOUS=nLpQb8GDJOgUw-q5NmN6Jo1dfd6A1IxxveZR5XhZMM8PEmnoxOHnKfEk5zzqPmW_Jl4f2DAyD4e35xZpS3UPgymB9qxRoDkiommlGoBiwgpk4fejiMiX57EKyJVJ8L6hIMJLtQ2; PreferredCurrency=SGD; ASP.NET_SessionId=wtqubuvw03bwica5txpiljtf; __RequestVerificationToken=StEYfeuB-1V3rfNGg-zALQ5ShhNC6h7NP97aNfMhfsUFarN4ZQe3h9IlT9mnEwfVu7xBiYz2KlyLwe00sq1pN9PFHBs1",
+#     "Referer": "https://www.silverbullion.com.sg/Account/Login",
+#     "Referrer-Policy": "strict-origin-when-cross-origin"
+#   },
+#   "body": "__RequestVerificationToken=jQG-gHTlQx4j2rcbW94meA5T3Z8ow_GwnbV7W_84XEj7V2XgwA29kFVl9udgbmGDEJHyPdvdUubk0CTJ5273YqCakog1&ReturnUrl=&CopyCart=False&TokenCode=&CaptchaToken=&VerifyMethod=&UsernameEmail=123&Password=123",
+#   "method": "POST"
+# });
