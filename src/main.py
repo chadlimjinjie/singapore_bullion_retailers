@@ -19,7 +19,7 @@ email = os.getenv('BULLIONSTAR_EMAIL')
 password = os.getenv('BULLIONSTAR_PASSWORD')
 # password = getpass.getpass('Enter your password: ')
 # print(email, password)
-bullionstar_client = BullionStar(cuurency='SGD', locationId=1, development=False)
+bullionstar_client = BullionStar(currency='SGD', locationId=1, development=False)
 bullionstar_client.login(email, password)
 display_menu()
 while True:
