@@ -55,15 +55,15 @@ IMPORTANT!!! Product ID are different across location
 ```python
 cart_response = bullionstar_client.add_to_shopping_cart(productId=481, quantity=32)
 ```
-- Update Shopping Cart (unstable)
-- Remove from Shopping Cart (unstable)
+- Update Shopping Cart
+- Remove from Shopping Cart
 - Load All Shopping Carts
 
-Buy Checkout API (in-development)
+Buy Checkout API
 - Initialize Order
-- Update Order
-- Confirm Order
-- Confirm Order and Create Account
+- Update Order (in-development)
+- Confirm Order (in-development)
+- Confirm Order and Create Account (in-development)
 
 
 Silver Bullion Singapore Stargrams (development on hold)
