@@ -3,6 +3,11 @@ import getpass
 
 from bullion import BullionStar
 
+# email, password = {
+#     'email': 1,
+#     'password': 2
+# }.values()
+# print(email, password)
 
 def display_menu():
     print('1. Add to Shopping Cart')
@@ -46,6 +51,7 @@ while True:
         bullionstar_client.display_shopping_cart()
     elif option == '7':
         bullionstar_client.initialize_order('SGD', 3, 37)
+        # print(bullionstar_client.initialize_order('SGD', 3, 37))
     elif option == '8':
         display_menu()
         # bullionstar_client.affiliate()

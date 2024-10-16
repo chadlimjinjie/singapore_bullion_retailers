@@ -1,6 +1,8 @@
 import hashlib
 from requests import Session
 
+from bullion.BullionStar.models import InitializedOrder
+
 '''
 https://services.bullionstar.com/product/filter/desktop?locationId=1&page=1&name=root&currency=SGD&apg=-1
 '''
@@ -88,8 +90,8 @@ class BullionStar:
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticate', data=body_authenticate) 
         data = resp.json()
-        print(resp.status_code, data)
-            
+        # print(resp.status_code, data)
+        
         self.accessToken = data['accessToken']
         return data
 
@@ -257,11 +259,10 @@ class BullionStar:
         '''
 
         resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init?currency={currency}&shippingMethodId={shippingMethodId}&paymentMethodId={paymentMethodId}&locationId=1&productsString={self.cartString}')
-        # data = resp.json()
-        data = resp.json()
-        # shippingMethods, shippingMethodId, paymentMethods, paymentMethodId, cart, costs = data['shippingMethods'], data['shippingMethodId'], data['paymentMethods'], data['paymentMethodId'], data['cart'], data['costs']
-        # initialized_order = InitializedOrder(shippingMethods, shippingMethodId, paymentMethods, paymentMethodId, cart, costs)
-        return data
+        data: dict = resp.json()
+        initialized_order = InitializedOrder(data)
+
+        return initialized_order
 
     
     # Confirm Order
