@@ -50,9 +50,12 @@ while True:
     elif option == '6':
         bullionstar_client.display_shopping_cart()
     elif option == '7':
-        bullionstar_client.initialize_order('SGD', 3, 37)
+        bullionstar_client.initialize_order(3, 37)
         # print(bullionstar_client.initialize_order('SGD', 3, 37))
     elif option == '8':
+        bullionstar_client.confirm_order()
+        # print(bullionstar_client.initialize_order('SGD', 3, 37))
+    elif option == '9':
         display_menu()
         # bullionstar_client.affiliate()
     elif option == '-1':

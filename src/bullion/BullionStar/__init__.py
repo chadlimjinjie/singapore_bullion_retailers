@@ -1,6 +1,6 @@
 import hashlib
 from requests import Session
-
+import segno
 from bullion.BullionStar.models import InitializedOrder
 
 '''
@@ -25,6 +25,8 @@ class BullionStar:
         self.cartEntries: list = []
         self.cartString: str = ''
         self.locationId: int = locationId
+        self.currency: str = currency
+        self.initializedOrder: InitializedOrder
         pass
     
     def shopping_cart_api_headers(self):
@@ -134,8 +136,8 @@ class BullionStar:
         return data
 
     
-    def product_prices(self, currency: str, locationId: int, productIds: str):
-        resp = self.session.get(f'https://{self.uri}/product/v1/prices?currency={currency}&locationId={locationId}&productIds={productIds}')
+    def product_prices(self, locationId: int, productIds: str):
+        resp = self.session.get(f'https://{self.uri}/product/v1/prices?currency={self.currency}&locationId={locationId}&productIds={productIds}')
         data = resp.json()
         print(resp.status_code, data)
         return data
@@ -252,19 +254,27 @@ class BullionStar:
 
     '''
     # Initialize Order
-    def initialize_order(self, currency: str, shippingMethodId: int, paymentMethodId: int):
+    def initialize_order(self, shippingMethodId: int, paymentMethodId: int):
         '''
         Use this API to initialize a Buy order. Get the total order price, and obtain a priceLockToken to lock in on the order price before placing the order. This API also returns shipping and payment methods that are available for the order.
         The priceLockToken is currently valid for three minutes; however this limit is subject to change.
         '''
 
-        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init?currency={currency}&shippingMethodId={shippingMethodId}&paymentMethodId={paymentMethodId}&locationId=1&productsString={self.cartString}')
+        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init?currency={self.currency}&shippingMethodId={shippingMethodId}&paymentMethodId={paymentMethodId}&locationId=1&productsString={self.cartString}')
         data: dict = resp.json()
         initialized_order = InitializedOrder(data)
 
         return initialized_order
 
+    '''
     
+    cardExpMonth=1&cardExpYear=2025&currency=SGD&paymentMethodId=37&shippingMethodId=3&locationId=1&
+    phoneCountry=SG&countryCode=SG&productsString=1071%2C2&priceLockToken=eyJraWQiOiIxLjAuMCIsImFsZyI6IlJTMjU2In0.eyJpc3MiOiJidWxsaW9uc3RhciIsImV4cCI6MTcyOTA4NTA2NCwiaWF0IjoxNzI5MDg0ODg0LCJzdWIiOiJ7XCJwcm9kdWN0RmFjdG9yTWFwXCI6e1wiMTA3MVwiOntcImZhY3RvclwiOjEuMDk5OTAwMDAwMDAwMDAwMDAwMDAsXCJwcm9tb0lkXCI6MTQyNCxcImthbUFjY291bnRJZFwiOjB9fSxcImN1cnJlbmN5XCI6XCJTR0RcIixcInJhdGVJZFwiOjQyOTk2OTUsXCJleHBpcmVUaW1lXCI6MTcyOTA4NTA2NDQ0M30ifQ.R1oUpT0lxOwIYZjwS5HxALqVszd1o2VIOIVkH7VY0dDbq3SZVtWEaJdYe5AYVYyP6qj_CZxtvMFrpD3Xg8l-X_gmLEZXCEhZ1rHBWv8xGEHm5hEqCg0q-pgPZzZWw_f6ZAhxxC_rz-hUW6xgt9ZrxaBhp9CRVeGy2cd3CmAKG4N7kTfQpbiebbIqjgf3l_gjJhFqGEUgOJKxlQavvlkk2eRyPFd534Wq4hBrXJEJBIrzgjlydsJRYEG1c6bDXBpgSKmRhGiu6UNr4GN6dBjPTsx6dFEwzf3ZssD5F4-RRW2x6bTlWNuB347muRWNCg1qVK9_JAxJOVq0FG-YfJD9OQ
+    message=&topUp=&phoneNumber=81136098&name=Chad+Lim+Jin+Jie&address1=417+Hougang+Avenue+8&address2=13-972&
+    city=Singapore&postCode=530417&state=Singapore&shippingName=&ct=BSSEC_TOKEN&aid=-1&blog=&
+    post=&ref=https%3A%2F%2Fwww.bullionstar.com%2F&machineId=EMV93wOBXXOUg04IOsKY&sessionId=&ignoreWarning=false&device=D
+    
+    '''
     # Confirm Order
     def confirm_order(self):
         '''
@@ -272,6 +282,9 @@ class BullionStar:
 
         If no orderId or url is returned even though the request status is successful(status=0), this is likely due to an expired priceLockToken used in the request. Call the /api/v2/buycheckout/update API again to obtain a new token.
         '''
+        if self.initializedOrder:
+            raise Exception('Order not initialized')
+        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/confirm?accessToken={self.accessToken}&currency={self.currency}&productsString{self.cartString}')
         return
     
     # Chart API
@@ -304,3 +317,9 @@ class BullionStar:
         print(data)
         return data
 
+
+    def display_payment_qr():
+        # segno
+        pass
+    
+    

@@ -2,9 +2,6 @@
 https://www.bullionstar.com/developer/docs/api/resources/buy-checkout.html#buy-checkout-init-post
 '''
 
-from typing import Any
-
-
 class InitializedOrder:
     '''
     
