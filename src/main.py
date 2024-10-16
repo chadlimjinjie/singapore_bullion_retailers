@@ -18,6 +18,7 @@ def display_menu():
     print('6. Display Shopping Cart')
     print('7. Initialize Order')
     print('8. Display Option Menu')
+    print('9. Display Option Menu')
 
 
 email = os.getenv('BULLIONSTAR_EMAIL')

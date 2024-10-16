@@ -26,7 +26,21 @@ class BullionStar:
         self.cartString: str = ''
         self.locationId: int = locationId
         self.currency: str = currency
-        self.initializedOrder: InitializedOrder
+        self.initializedOrder: InitializedOrder = None
+        
+        # Initialize order https://www.bullionstar.com/developer/docs/api/resources/buy-checkout.html#buy-checkout-init-post
+        
+        # Account details https://services.bullionstar.com/account/details/get
+        self.countryCode: str
+        self.countryCode: str
+        self.name: str
+        self.phoneCountry: str
+        self.phoneNumber: str
+        self.address1: str
+        self.address2: str
+        self.postCode: str
+        self.city: str
+        self.state: str
         pass
     
     def shopping_cart_api_headers(self):
@@ -263,17 +277,12 @@ class BullionStar:
         resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/init?currency={self.currency}&shippingMethodId={shippingMethodId}&paymentMethodId={paymentMethodId}&locationId=1&productsString={self.cartString}')
         data: dict = resp.json()
         initialized_order = InitializedOrder(data)
-
+        self.initializedOrder = initialized_order
         return initialized_order
 
+
     '''
-    
-    cardExpMonth=1&cardExpYear=2025&currency=SGD&paymentMethodId=37&shippingMethodId=3&locationId=1&
-    phoneCountry=SG&countryCode=SG&productsString=1071%2C2&priceLockToken=eyJraWQiOiIxLjAuMCIsImFsZyI6IlJTMjU2In0.eyJpc3MiOiJidWxsaW9uc3RhciIsImV4cCI6MTcyOTA4NTA2NCwiaWF0IjoxNzI5MDg0ODg0LCJzdWIiOiJ7XCJwcm9kdWN0RmFjdG9yTWFwXCI6e1wiMTA3MVwiOntcImZhY3RvclwiOjEuMDk5OTAwMDAwMDAwMDAwMDAwMDAsXCJwcm9tb0lkXCI6MTQyNCxcImthbUFjY291bnRJZFwiOjB9fSxcImN1cnJlbmN5XCI6XCJTR0RcIixcInJhdGVJZFwiOjQyOTk2OTUsXCJleHBpcmVUaW1lXCI6MTcyOTA4NTA2NDQ0M30ifQ.R1oUpT0lxOwIYZjwS5HxALqVszd1o2VIOIVkH7VY0dDbq3SZVtWEaJdYe5AYVYyP6qj_CZxtvMFrpD3Xg8l-X_gmLEZXCEhZ1rHBWv8xGEHm5hEqCg0q-pgPZzZWw_f6ZAhxxC_rz-hUW6xgt9ZrxaBhp9CRVeGy2cd3CmAKG4N7kTfQpbiebbIqjgf3l_gjJhFqGEUgOJKxlQavvlkk2eRyPFd534Wq4hBrXJEJBIrzgjlydsJRYEG1c6bDXBpgSKmRhGiu6UNr4GN6dBjPTsx6dFEwzf3ZssD5F4-RRW2x6bTlWNuB347muRWNCg1qVK9_JAxJOVq0FG-YfJD9OQ
-    message=&topUp=&phoneNumber=81136098&name=Chad+Lim+Jin+Jie&address1=417+Hougang+Avenue+8&address2=13-972&
-    city=Singapore&postCode=530417&state=Singapore&shippingName=&ct=BSSEC_TOKEN&aid=-1&blog=&
-    post=&ref=https%3A%2F%2Fwww.bullionstar.com%2F&machineId=EMV93wOBXXOUg04IOsKY&sessionId=&ignoreWarning=false&device=D
-    
+        
     '''
     # Confirm Order
     def confirm_order(self):
@@ -282,17 +291,22 @@ class BullionStar:
 
         If no orderId or url is returned even though the request status is successful(status=0), this is likely due to an expired priceLockToken used in the request. Call the /api/v2/buycheckout/update API again to obtain a new token.
         '''
-        if self.initializedOrder:
+        if self.initializedOrder is None:
+            print('error')
             raise Exception('Order not initialized')
-        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/confirm?accessToken={self.accessToken}&currency={self.currency}&productsString{self.cartString}')
-        return
+
+        resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/confirm?accessToken={self.accessToken}&currency={self.currency}&productsString{self.cartString}&countryCode=')
+        data: dict = resp.json()
+        print(data)
+        return data
+    
     
     # Chart API
     def get_current_spot_price_and_rate(self) -> None:
         '''
         Use this API to retrieve the current spot prices and rates for gold, silver, platinum, and palladium, which are usually updated very minute. The percentage changes are measured against the provided timeZoneId value in the selected currency.
         '''
-        resp = self.session.get('https://{self.uri}/chart/v1/spot')
+        resp = self.session.get(f'https://{self.uri}/chart/v1/spot')
         data = resp.json()
         return data
         
@@ -306,6 +320,7 @@ class BullionStar:
         data = resp.text
         print(data)
         return data
+
 
     # Announcements API
     def latest_announcements(self, visitedDays: int, geoCountry: str, dismissed: int):
