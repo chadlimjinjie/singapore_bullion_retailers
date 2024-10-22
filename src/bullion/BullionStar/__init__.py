@@ -1,6 +1,7 @@
 import hashlib
 from requests import Session
-import segno
+# import segno
+from bullion.BullionStar.models import Account
 from bullion.BullionStar.models import InitializedOrder
 
 '''
@@ -30,17 +31,8 @@ class BullionStar:
         
         # Initialize order https://www.bullionstar.com/developer/docs/api/resources/buy-checkout.html#buy-checkout-init-post
         
-        # Account details https://services.bullionstar.com/account/details/get
-        self.countryCode: str
-        self.countryCode: str
-        self.name: str
-        self.phoneCountry: str
-        self.phoneNumber: str
-        self.address1: str
-        self.address2: str
-        self.postCode: str
-        self.city: str
-        self.state: str
+        self.account: Account = None
+
         pass
     
     def shopping_cart_api_headers(self):
@@ -54,12 +46,37 @@ class BullionStar:
         data_authenticate = self.authenticate(authToken, self.encryptPassword(salt, self.hashPassword(password)))
         data_load_all_shopping_carts = self.load_all_shopping_carts()
         # print(data_load_all_shopping_carts)
+        
+        if data_authenticate:
+            
+            pass
+        
         if data_load_all_shopping_carts:
             self.cartEntries = data_load_all_shopping_carts['response']['cartEntries']
             self.cartString = data_load_all_shopping_carts['response']['cartString']
+        
         return data_authenticate
 
 
+    def account_detail(self) -> Account:
+                
+        resp = self.session.post('https://services.bullionstar.com/account/details/get', data={
+            'ignoreWarning': False,
+            'device': 'D'
+        })
+        
+        if resp.status_code != 200:
+            return    
+        
+        data = resp.json()
+        
+        if data['status'] == 1:
+            return
+        
+        Account()
+        
+        return data
+    
     # Authentication API: https://www.bullionstar.com/developer/docs/api/resources/auth.html
     # Initialize Authentication
     def initialize(self, email: str):
@@ -334,7 +351,6 @@ class BullionStar:
 
 
     def display_payment_qr():
-        # segno
         pass
     
     
