@@ -55,6 +55,8 @@ class BullionStar:
             self.cartEntries = data_load_all_shopping_carts['response']['cartEntries']
             self.cartString = data_load_all_shopping_carts['response']['cartString']
         
+        self.account = self.account_detail()
+        
         return data_authenticate
 
 
@@ -73,9 +75,27 @@ class BullionStar:
         if data['status'] == 1:
             return
         
-        Account()
+        (accountId, type, email, 
+         name, nationalityCode, phoneNumber, 
+         phoneCountry, address1, address2, 
+         postCode, state, city, 
+         countryCode, twoFactorSMSAvailable, twoFactorAuthenticationEnabled) = (data['accountId'], data['type'], data['email'],
+                                                                                data['name'], data['nationalityCode'], data['phoneNumber'],
+                                                                                data['phoneCountry'], data['address1'], data['address2'],
+                                                                                data['postCode'], data['state'], data['city'],
+                                                                                data['countryCode'], data['twoFactorSMSAvailable'], data['twoFactorAuthenticationEnabled'])
         
-        return data
+        # print(accountId, type, email, 
+        #       name, nationalityCode, phoneNumber, 
+        #       phoneCountry, address1, address2, 
+        #       postCode, state, city, 
+        #       countryCode, twoFactorSMSAvailable, twoFactorAuthenticationEnabled)
+        
+        return Account(accountId, type, email, 
+                       name, nationalityCode, phoneNumber, 
+                       phoneCountry, address1, address2, 
+                       postCode, state, city, 
+                       countryCode, twoFactorSMSAvailable, twoFactorAuthenticationEnabled)
     
     # Authentication API: https://www.bullionstar.com/developer/docs/api/resources/auth.html
     # Initialize Authentication
@@ -91,9 +111,15 @@ class BullionStar:
         }
 
         resp = self.session.post(f'https://{self.uri}/auth/v1/initialize', data=body_initialize)
-        data = resp.json()
         
+        if resp.status_code != 200:
+            return
+        
+        data = resp.json()
         # print(resp.status_code, data)
+
+        if data['status'] == 1:
+            return
         
         return (data['authToken'], data['salt'])
 
@@ -122,8 +148,16 @@ class BullionStar:
             'device': 'D'
         }
         resp = self.session.post(f'https://{self.uri}/auth/v1/authenticate', data=body_authenticate) 
-        data = resp.json()
+        
         # print(resp.status_code, data)
+        
+        if resp.status_code != 200:
+            return
+        
+        data = resp.json()
+        
+        if data['status'] == 1:
+            return
         
         self.accessToken = data['accessToken']
         return data
