@@ -68,12 +68,12 @@ class BullionStar:
         })
         
         if resp.status_code != 200:
-            return    
+            return None
         
         data = resp.json()
         
         if data['status'] == 1:
-            return
+            return None
         
         (accountId, type, email, 
          name, nationalityCode, phoneNumber, 
@@ -332,13 +332,11 @@ class BullionStar:
         return initialized_order
 
 
-    '''
-        
-    '''
+
     # Confirm Order
-    def confirm_order(self):
+    def confirm_order(self) -> dict:
         '''
-        Use this API to confirm and place the order. If the confirm-order request is successful, the API returns a unique order ID and a URL to the order confirmation.
+        WARNING: Use this API to confirm and place the order. If the confirm-order request is successful, the API returns a unique order ID and a URL to the order confirmation.
 
         If no orderId or url is returned even though the request status is successful(status=0), this is likely due to an expired priceLockToken used in the request. Call the /api/v2/buycheckout/update API again to obtain a new token.
         '''
@@ -347,18 +345,29 @@ class BullionStar:
             raise Exception('Order not initialized')
 
         resp = self.session.post(f'https://{self.uri}/checkout/buycheckout/confirm?accessToken={self.accessToken}&currency={self.currency}&productsString{self.cartString}&countryCode=')
+        
+        if resp.status_code != 200:
+            return
+        
         data: dict = resp.json()
         print(data)
+        if data['status'] == 1:
+            return
+        
+        # When successfuly placed order clear cart string.
+        
         return data
     
     
+    
+    
     # Chart API
-    def get_current_spot_price_and_rate(self) -> None:
+    def get_current_spot_price_and_rate(self) -> dict:
         '''
         Use this API to retrieve the current spot prices and rates for gold, silver, platinum, and palladium, which are usually updated very minute. The percentage changes are measured against the provided timeZoneId value in the selected currency.
         '''
         resp = self.session.get(f'https://{self.uri}/chart/v1/spot')
-        data = resp.json()
+        data: dict = resp.json()
         return data
         
     

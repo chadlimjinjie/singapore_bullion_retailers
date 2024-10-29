@@ -1,6 +1,6 @@
 class Account:
     '''
-    
+    Account class
     '''
 
     def __init__(self, accountId: int, type: str, email: str, 
@@ -25,4 +25,6 @@ class Account:
         self.twoFactorSMSAvailable: bool = twoFactorSMSAvailable
         self.twoFactorAuthenticationEnabled: bool = twoFactorAuthenticationEnabled
 
+    def __str__(self) -> str:
+        return f'{self.accountId}'
 

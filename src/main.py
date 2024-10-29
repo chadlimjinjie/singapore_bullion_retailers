@@ -17,7 +17,7 @@ def display_menu():
     print('5. Load All Shopping Carts')
     print('6. Display Shopping Cart')
     print('7. Initialize Order')
-    print('8. Display Option Menu')
+    print('8. Confirm Order')
     print('9. Display Option Menu')
 
 
@@ -27,10 +27,14 @@ password = os.getenv('BULLIONSTAR_PASSWORD')
 # print(email, password)
 bullionstar_client = BullionStar(currency='SGD', locationId=1, development=False)
 bullionstar_client.login(email, password)
-display_menu()
+
+client_account = bullionstar_client.account_detail()
+print(client_account)
+
+
 while True:
+    display_menu()
     option = input('Enter option: ')
-    print()
     if option == '1':
         productId = int(input('Enter productId: '))
         quantity = int(input('Enter quantity: '))
